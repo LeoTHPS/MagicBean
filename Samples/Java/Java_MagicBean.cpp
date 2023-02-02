@@ -289,6 +289,164 @@ extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_memory_r
 
 	return true;
 }
+extern "C" JNIEXPORT jbyte JNICALL    Java_MagicBean_magic_bean_process_memory_read_int8(JNIEnv* jni, jclass clazz, jlong process, jlong address)
+{
+	int8_t value;
+
+	if (!magic_bean_process_memory_read_int8(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), &value))
+	{
+
+		jni->ThrowNew(
+			jni->FindClass("java/lang/Exception"),
+			"magic_bean_process_memory_read_int8 failed"
+		);
+	}
+
+	return value;
+}
+extern "C" JNIEXPORT jbyte JNICALL    Java_MagicBean_magic_bean_process_memory_read_int16(JNIEnv* jni, jclass clazz, jlong process, jlong address)
+{
+	int16_t value;
+
+	if (!magic_bean_process_memory_read_int16(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), &value))
+	{
+
+		jni->ThrowNew(
+			jni->FindClass("java/lang/Exception"),
+			"magic_bean_process_memory_read_int16 failed"
+		);
+	}
+
+	return value;
+}
+extern "C" JNIEXPORT jbyte JNICALL    Java_MagicBean_magic_bean_process_memory_read_int32(JNIEnv* jni, jclass clazz, jlong process, jlong address)
+{
+	int32_t value;
+
+	if (!magic_bean_process_memory_read_int32(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), &value))
+	{
+
+		jni->ThrowNew(
+			jni->FindClass("java/lang/Exception"),
+			"magic_bean_process_memory_read_int32 failed"
+		);
+	}
+
+	return value;
+}
+extern "C" JNIEXPORT jbyte JNICALL    Java_MagicBean_magic_bean_process_memory_read_int64(JNIEnv* jni, jclass clazz, jlong process, jlong address)
+{
+	int64_t value;
+
+	if (!magic_bean_process_memory_read_int64(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), &value))
+	{
+
+		jni->ThrowNew(
+			jni->FindClass("java/lang/Exception"),
+			"magic_bean_process_memory_read_int64 failed"
+		);
+	}
+
+	return value;
+}
+extern "C" JNIEXPORT jbyte JNICALL    Java_MagicBean_magic_bean_process_memory_read_uint8(JNIEnv* jni, jclass clazz, jlong process, jlong address)
+{
+	uint8_t value;
+
+	if (!magic_bean_process_memory_read_uint8(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), &value))
+	{
+
+		jni->ThrowNew(
+			jni->FindClass("java/lang/Exception"),
+			"magic_bean_process_memory_read_uint8 failed"
+		);
+	}
+
+	return static_cast<jbyte>(
+		value
+	);
+}
+extern "C" JNIEXPORT jshort JNICALL    Java_MagicBean_magic_bean_process_memory_read_uint16(JNIEnv* jni, jclass clazz, jlong process, jlong address)
+{
+	uint16_t value;
+
+	if (!magic_bean_process_memory_read_uint16(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), &value))
+	{
+
+		jni->ThrowNew(
+			jni->FindClass("java/lang/Exception"),
+			"magic_bean_process_memory_read_uint16 failed"
+		);
+	}
+
+	return static_cast<jshort>(
+		value
+	);
+}
+extern "C" JNIEXPORT jint JNICALL    Java_MagicBean_magic_bean_process_memory_read_uint32(JNIEnv* jni, jclass clazz, jlong process, jlong address)
+{
+	uint32_t value;
+
+	if (!magic_bean_process_memory_read_uint32(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), &value))
+	{
+
+		jni->ThrowNew(
+			jni->FindClass("java/lang/Exception"),
+			"magic_bean_process_memory_read_uint32 failed"
+		);
+	}
+
+	return static_cast<jint>(
+		value
+	);
+}
+extern "C" JNIEXPORT jlong JNICALL    Java_MagicBean_magic_bean_process_memory_read_uint64(JNIEnv* jni, jclass clazz, jlong process, jlong address)
+{
+	uint64_t value;
+
+	if (!magic_bean_process_memory_read_uint64(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), &value))
+	{
+
+		jni->ThrowNew(
+			jni->FindClass("java/lang/Exception"),
+			"magic_bean_process_memory_read_uint64 failed"
+		);
+	}
+
+	return static_cast<jlong>(
+		value
+	);
+}
+extern "C" JNIEXPORT jfloat JNICALL   Java_MagicBean_magic_bean_process_memory_read_float(JNIEnv* jni, jclass clazz, jlong process, jlong address)
+{
+	float value;
+
+	if (!magic_bean_process_memory_read_float(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), &value))
+	{
+
+		jni->ThrowNew(
+			jni->FindClass("java/lang/Exception"),
+			"magic_bean_process_memory_read_float failed"
+		);
+	}
+
+	return value;
+}
+extern "C" JNIEXPORT jdouble JNICALL  Java_MagicBean_magic_bean_process_memory_read_double(JNIEnv* jni, jclass clazz, jlong process, jlong address)
+{
+	double value;
+
+	if (!magic_bean_process_memory_read_double(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), &value))
+	{
+
+		jni->ThrowNew(
+			jni->FindClass("java/lang/Exception"),
+			"magic_bean_process_memory_read_double failed"
+		);
+	}
+
+	return value;
+}
 extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_memory_write(JNIEnv* jni, jclass clazz, jlong process, jlong address, jbyteArray buffer, jint offset, jint size)
 {
 	auto lpBuffer = jni_GetByteArray(
@@ -310,6 +468,46 @@ extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_memory_w
 	);
 
 	return value;
+}
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_memory_write_int8(JNIEnv* jni, jclass clazz, jlong process, jlong address, jbyte value)
+{
+	return magic_bean_process_memory_write_int8(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), value);
+}
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_memory_write_int16(JNIEnv* jni, jclass clazz, jlong process, jlong address, jshort value)
+{
+	return magic_bean_process_memory_write_int16(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), value);
+}
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_memory_write_int32(JNIEnv* jni, jclass clazz, jlong process, jlong address, jint value)
+{
+	return magic_bean_process_memory_write_int32(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), value);
+}
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_memory_write_int64(JNIEnv* jni, jclass clazz, jlong process, jlong address, jlong value)
+{
+	return magic_bean_process_memory_write_int64(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), value);
+}
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_memory_write_uint8(JNIEnv* jni, jclass clazz, jlong process, jlong address, jbyte value)
+{
+	return magic_bean_process_memory_write_uint8(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), static_cast<uint8_t>(value));
+}
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_memory_write_uint16(JNIEnv* jni, jclass clazz, jlong process, jlong address, jshort value)
+{
+	return magic_bean_process_memory_write_uint16(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), static_cast<uint16_t>(value));
+}
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_memory_write_uint32(JNIEnv* jni, jclass clazz, jlong process, jlong address, jint value)
+{
+	return magic_bean_process_memory_write_uint32(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), static_cast<uint32_t>(value));
+}
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_memory_write_uint64(JNIEnv* jni, jclass clazz, jlong process, jlong address, jlong value)
+{
+	return magic_bean_process_memory_write_uint64(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), static_cast<uint64_t>(value));
+}
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_memory_write_float(JNIEnv* jni, jclass clazz, jlong process, jlong address, float value)
+{
+	return magic_bean_process_memory_write_float(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), value);
+}
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_memory_write_double(JNIEnv* jni, jclass clazz, jlong process, jlong address, double value)
+{
+	return magic_bean_process_memory_write_double(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), value);
 }
 extern "C" JNIEXPORT jlong JNICALL    Java_MagicBean_magic_bean_process_memory_find(JNIEnv* jni, jclass clazz, jlong process, jstring mask, jbyteArray pattern)
 {

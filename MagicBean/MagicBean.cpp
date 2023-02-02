@@ -31,6 +31,11 @@ struct _MagicBeanLibrary
 
 struct _MagicBeanWindow
 {
+#if defined(AL_PLATFORM_LINUX)
+
+#elif defined(AL_PLATFORM_WINDOWS)
+	HWND              hWND;
+#endif
 	MagicBeanProcess* lpProcess;
 };
 
@@ -374,7 +379,87 @@ bool              magic_bean_process_set_debugger_present(MagicBeanProcess* proc
 	return false;
 }
 bool              magic_bean_process_memory_read(MagicBeanProcess* process, uint64_t address, void* lpBuffer, uint64_t size);
+bool              magic_bean_process_memory_read_int8(MagicBeanProcess* process, uint64_t address, int8_t* lpValue)
+{
+	return magic_bean_process_memory_read(process, address, lpValue, sizeof(int8_t));
+}
+bool              magic_bean_process_memory_read_int16(MagicBeanProcess* process, uint64_t address, int16_t* lpValue)
+{
+	return magic_bean_process_memory_read(process, address, lpValue, sizeof(int16_t));
+}
+bool              magic_bean_process_memory_read_int32(MagicBeanProcess* process, uint64_t address, int32_t* lpValue)
+{
+	return magic_bean_process_memory_read(process, address, lpValue, sizeof(int32_t));
+}
+bool              magic_bean_process_memory_read_int64(MagicBeanProcess* process, uint64_t address, int64_t* lpValue)
+{
+	return magic_bean_process_memory_read(process, address, lpValue, sizeof(int64_t));
+}
+bool              magic_bean_process_memory_read_uint8(MagicBeanProcess* process, uint64_t address, uint8_t* lpValue)
+{
+	return magic_bean_process_memory_read(process, address, lpValue, sizeof(uint8_t));
+}
+bool              magic_bean_process_memory_read_uint16(MagicBeanProcess* process, uint64_t address, uint16_t* lpValue)
+{
+	return magic_bean_process_memory_read(process, address, lpValue, sizeof(uint16_t));
+}
+bool              magic_bean_process_memory_read_uint32(MagicBeanProcess* process, uint64_t address, uint32_t* lpValue)
+{
+	return magic_bean_process_memory_read(process, address, lpValue, sizeof(uint32_t));
+}
+bool              magic_bean_process_memory_read_uint64(MagicBeanProcess* process, uint64_t address, uint64_t* lpValue)
+{
+	return magic_bean_process_memory_read(process, address, lpValue, sizeof(uint64_t));
+}
+bool              magic_bean_process_memory_read_float(MagicBeanProcess* process, uint64_t address, float* lpValue)
+{
+	return magic_bean_process_memory_read(process, address, lpValue, sizeof(float));
+}
+bool              magic_bean_process_memory_read_double(MagicBeanProcess* process, uint64_t address, double* lpValue)
+{
+	return magic_bean_process_memory_read(process, address, lpValue, sizeof(double));
+}
 bool              magic_bean_process_memory_write(MagicBeanProcess* process, uint64_t address, const void* lpBuffer, uint64_t size);
+bool              magic_bean_process_memory_write_int8(MagicBeanProcess* process, uint64_t address, int8_t value)
+{
+	return magic_bean_process_memory_write(process, address, &value, sizeof(int8_t));
+}
+bool              magic_bean_process_memory_write_int16(MagicBeanProcess* process, uint64_t address, int16_t value)
+{
+	return magic_bean_process_memory_write(process, address, &value, sizeof(int16_t));
+}
+bool              magic_bean_process_memory_write_int32(MagicBeanProcess* process, uint64_t address, int32_t value)
+{
+	return magic_bean_process_memory_write(process, address, &value, sizeof(int32_t));
+}
+bool              magic_bean_process_memory_write_int64(MagicBeanProcess* process, uint64_t address, int64_t value)
+{
+	return magic_bean_process_memory_write(process, address, &value, sizeof(int64_t));
+}
+bool              magic_bean_process_memory_write_uint8(MagicBeanProcess* process, uint64_t address, uint8_t value)
+{
+	return magic_bean_process_memory_write(process, address, &value, sizeof(uint8_t));
+}
+bool              magic_bean_process_memory_write_uint16(MagicBeanProcess* process, uint64_t address, uint16_t value)
+{
+	return magic_bean_process_memory_write(process, address, &value, sizeof(uint16_t));
+}
+bool              magic_bean_process_memory_write_uint32(MagicBeanProcess* process, uint64_t address, uint32_t value)
+{
+	return magic_bean_process_memory_write(process, address, &value, sizeof(uint32_t));
+}
+bool              magic_bean_process_memory_write_uint64(MagicBeanProcess* process, uint64_t address, uint64_t value)
+{
+	return magic_bean_process_memory_write(process, address, &value, sizeof(uint64_t));
+}
+bool              magic_bean_process_memory_write_float(MagicBeanProcess* process, uint64_t address, float value)
+{
+	return magic_bean_process_memory_write(process, address, &value, sizeof(float));
+}
+bool              magic_bean_process_memory_write_double(MagicBeanProcess* process, uint64_t address, double value)
+{
+	return magic_bean_process_memory_write(process, address, &value, sizeof(double));
+}
 uint64_t          magic_bean_process_memory_find(MagicBeanProcess* process, const char* mask, const uint8_t* pattern);
 uint64_t          magic_bean_process_memory_find_at(MagicBeanProcess* process, const char* mask, const uint8_t* pattern, uint64_t address, uint64_t size);
 uint64_t          magic_bean_process_memory_allocate(MagicBeanProcess* process, uint64_t size);
