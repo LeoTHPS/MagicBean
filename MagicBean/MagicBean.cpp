@@ -437,9 +437,30 @@ bool              magic_bean_process_enumerate(MagicBean* magic, magic_bean_proc
 		return false;
 	}
 
-	// TODO: implement
+	AL::OS::ProcessEnumCallback _callback([callback, lpParam](AL::OS::ProcessId _id, const AL::String& _name)
+	{
+		MagicBeanProcessInformation information =
+		{
+			.ID   = _id,
+			.Name = _name.GetCString()
+		};
 
-	return false;
+		return callback(&information, lpParam);
+	});
+
+	try
+	{
+		AL::OS::Process::Enumerate(
+			_callback
+		);
+	}
+	catch (const AL::Exception& exception)
+	{
+
+		return false;
+	}
+
+	return true;
 }
 MagicBeanProcess* magic_bean_process_open_by_id(MagicBean* magic, uint32_t id)
 {
