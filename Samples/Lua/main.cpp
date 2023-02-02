@@ -15,20 +15,20 @@ typedef AL::Lua543::Function::LuaCallback<_magic_bean_window_enumerate_callback>
 typedef bool(_magic_bean_thread_enumerate_callback)(uint32_t id);
 typedef AL::Lua543::Function::LuaCallback<_magic_bean_thread_enumerate_callback>  _magic_bean_thread_enumerate_callback_lua;
 
-bool     _magic_bean_is_null(void* lpUserData)
+bool                                        _magic_bean_is_null(void* lpUserData)
 {
 	return lpUserData == nullptr;
 }
-bool     _magic_bean_is_not_null(void* lpUserData)
+bool                                        _magic_bean_is_not_null(void* lpUserData)
 {
 	return lpUserData != nullptr;
 }
-uint64_t _magic_bean_to_number(void* lpUserData)
+uint64_t                                    _magic_bean_to_number(void* lpUserData)
 {
 	return reinterpret_cast<uint64_t>(lpUserData);
 }
 
-bool     _magic_bean_thread_enumerate(MagicBeanProcess* process, _magic_bean_thread_enumerate_callback_lua callback)
+bool                                        _magic_bean_thread_enumerate(MagicBeanProcess* process, _magic_bean_thread_enumerate_callback_lua callback)
 {
 	magic_bean_thread_enumerate_callback _callback = [](const MagicBeanThreadInformation* _lpInformation, void* _lpParam)
 	{
@@ -39,8 +39,7 @@ bool     _magic_bean_thread_enumerate(MagicBeanProcess* process, _magic_bean_thr
 
 	return magic_bean_thread_enumerate(process, _callback, &callback);
 }
-
-bool     _magic_bean_window_enumerate(MagicBeanProcess* process, _magic_bean_process_enumerate_callback_lua callback)
+bool                                        _magic_bean_window_enumerate(MagicBeanProcess* process, _magic_bean_process_enumerate_callback_lua callback)
 {
 	magic_bean_window_enumerate_callback _callback = [](const MagicBeanWindowInformation* _lpInformation, void* _lpParam)
 	{
@@ -52,8 +51,7 @@ bool     _magic_bean_window_enumerate(MagicBeanProcess* process, _magic_bean_pro
 
 	return magic_bean_window_enumerate(process, _callback, &callback);
 }
-
-bool     _magic_bean_process_enumerate(MagicBean* magic, _magic_bean_process_enumerate_callback_lua callback)
+bool                                        _magic_bean_process_enumerate(MagicBean* magic, _magic_bean_process_enumerate_callback_lua callback)
 {
 	magic_bean_process_enumerate_callback _callback = [](const MagicBeanProcessInformation* _lpInformation, void* _lpParam)
 	{
