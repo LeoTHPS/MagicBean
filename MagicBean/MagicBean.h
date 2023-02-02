@@ -66,6 +66,8 @@ typedef bool(*magic_bean_process_enumerate_callback)(const MagicBeanProcessInfor
 
 MAGIC_BEAN_EXPORT MagicBean*        magic_bean_open();
 MAGIC_BEAN_EXPORT void              magic_bean_close(MagicBean* magic);
+MAGIC_BEAN_EXPORT uint32_t          magic_bean_get_current_thread_id();
+MAGIC_BEAN_EXPORT uint32_t          magic_bean_get_current_process_id();
 
 MAGIC_BEAN_EXPORT bool              magic_bean_thread_enumerate(MagicBeanProcess* process, magic_bean_thread_enumerate_callback callback, void* lpParam);
 MAGIC_BEAN_EXPORT MagicBeanThread*  magic_bean_thread_create(MagicBeanProcess* process, uint64_t address, uint64_t lpParam);

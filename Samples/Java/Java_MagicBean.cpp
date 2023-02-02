@@ -16,6 +16,18 @@ extern "C" JNIEXPORT void JNICALL     Java_MagicBean_magic_bean_close(JNIEnv* jn
 {
 	magic_bean_close(reinterpret_cast<MagicBean*>(magic));
 }
+extern "C" JNIEXPORT jint JNICALL     Java_MagicBean_magic_bean_get_current_thread_id(JNIEnv* jni, jclass clazz)
+{
+	return static_cast<jint>(
+		magic_bean_get_current_thread_id()
+	);
+}
+extern "C" JNIEXPORT jint JNICALL     Java_MagicBean_magic_bean_get_current_process_id(JNIEnv* jni, jclass clazz)
+{
+	return static_cast<jint>(
+		magic_bean_get_current_process_id()
+	);
+}
 
 extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_thread_enumerate(JNIEnv* jni, jclass clazz, jlong process, jobject callback)
 {

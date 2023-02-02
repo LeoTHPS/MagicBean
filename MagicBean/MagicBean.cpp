@@ -69,6 +69,18 @@ void              magic_bean_close(MagicBean* magic)
 		delete magic;
 	}
 }
+uint32_t          magic_bean_get_current_thread_id()
+{
+	return static_cast<uint32_t>(
+		AL::OS::GetCurrentThreadId()
+	);
+}
+uint32_t          magic_bean_get_current_process_id()
+{
+	return static_cast<uint32_t>(
+		AL::OS::GetCurrentProcessId()
+	);
+}
 
 bool              magic_bean_thread_enumerate(MagicBeanProcess* process, magic_bean_thread_enumerate_callback callback, void* lpParam)
 {

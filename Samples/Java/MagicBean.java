@@ -52,6 +52,8 @@ public class MagicBean {
 
 	public static native long    magic_bean_open();
 	public static native void    magic_bean_close(long magic);
+	public static native int     magic_bean_get_current_thread_id();
+	public static native int     magic_bean_get_current_process_id();
 
 	public static native boolean magic_bean_thread_enumerate(long process, ThreadEnumerateCallback callback);
 	public static native long    magic_bean_thread_create(long process, long address, long lpParam);
