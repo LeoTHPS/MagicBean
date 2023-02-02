@@ -6,6 +6,7 @@
 #include <AL/OS/System.hpp>
 #include <AL/OS/Process.hpp>
 
+#include <AL/Collections/Array.hpp>
 #include <AL/Collections/LinkedList.hpp>
 
 struct _MagicBean
@@ -285,6 +286,52 @@ void              magic_bean_window_close(MagicBeanWindow* window)
 
 		delete window;
 	}
+}
+const char*       magic_bean_window_get_name(MagicBeanWindow* window)
+{
+	if (window == nullptr)
+	{
+
+		return nullptr;
+	}
+
+	static AL::String lastWindowTitle;
+
+#if defined(SAL_PLATFORM_LINUX)
+	// TODO: implement
+	return nullptr;
+#elif defined(AL_PLATFORM_WINDOWS)
+	int windowTitleLength;
+
+	if ((windowTitleLength = GetWindowTextLengthA(window->hWND)) == 0)
+	{
+		if (GetLastError() != ERROR_SUCCESS)
+		{
+
+			return nullptr;
+		}
+	}
+
+	AL::Collections::Array<AL::String::Char> windowTitleBuffer(
+		static_cast<size_t>(windowTitleLength)
+	);
+
+	if ((windowTitleLength = GetWindowTextA(window->hWND, &windowTitleBuffer[0], windowTitleLength)) == 0)
+	{
+		if (GetLastError() != ERROR_SUCCESS)
+		{
+
+			return nullptr;
+		}
+	}
+
+	lastWindowTitle.Assign(
+		&windowTitleBuffer[0],
+		static_cast<size_t>(windowTitleLength)
+	);
+#endif
+
+	return lastWindowTitle.GetCString();
 }
 
 bool              magic_bean_process_enumerate(MagicBean* magic, magic_bean_process_enumerate_callback callback, void* lpParam);

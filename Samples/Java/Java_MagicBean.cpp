@@ -185,6 +185,18 @@ extern "C" JNIEXPORT void JNICALL     Java_MagicBean_magic_bean_window_close(JNI
 {
 	magic_bean_window_close(reinterpret_cast<MagicBeanWindow*>(window));
 }
+extern "C" JNIEXPORT jstring JNICALL  Java_MagicBean_magic_bean_window_get_name(JNIEnv* jni, jclass clazz, jlong window)
+{
+	if (auto lpName = magic_bean_window_get_name(reinterpret_cast<MagicBeanWindow*>(window)))
+	{
+
+		return jni->NewStringUTF(
+			lpName
+		);
+	}
+
+	return nullptr;
+}
 
 extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_enumerate(JNIEnv* jni, jclass clazz, jlong magic, jobject callback)
 {

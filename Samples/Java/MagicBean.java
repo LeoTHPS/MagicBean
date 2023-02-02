@@ -60,6 +60,7 @@ public class MagicBean {
 	public static native long    magic_bean_window_open_by_name(long process, String name);
 	public static native long    magic_bean_window_open_by_index(long process, int index);
 	public static native void    magic_bean_window_close(long window);
+	public static native String  magic_bean_window_get_name(long window);
 
 	public static native boolean magic_bean_process_enumerate(long magic, ProcessEnumerateCallback callback);
 	public static native long    magic_bean_process_open_by_id(long magic, int id);

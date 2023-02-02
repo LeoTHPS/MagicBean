@@ -99,6 +99,7 @@ void lua_init(AL::Lua543::State& lua)
 	lua_init_RegisterGlobal(lua, magic_bean_window_open_by_name);
 	lua_init_RegisterGlobal(lua, magic_bean_window_open_by_index);
 	lua_init_RegisterGlobal(lua, magic_bean_window_close);
+	lua_init_RegisterGlobal(lua, magic_bean_window_get_name);
 
 	lua_init_RegisterGlobalAs(lua, _magic_bean_process_enumerate, "magic_bean_process_enumerate");
 	lua_init_RegisterGlobal(lua, magic_bean_process_open_by_id);
