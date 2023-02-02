@@ -101,7 +101,7 @@ MAGIC_BEAN_EXPORT bool              magic_bean_process_memory_write_uint32(Magic
 MAGIC_BEAN_EXPORT bool              magic_bean_process_memory_write_uint64(MagicBeanProcess* process, uint64_t address, uint64_t value);
 MAGIC_BEAN_EXPORT bool              magic_bean_process_memory_write_float(MagicBeanProcess* process, uint64_t address, float value);
 MAGIC_BEAN_EXPORT bool              magic_bean_process_memory_write_double(MagicBeanProcess* process, uint64_t address, double value);
-MAGIC_BEAN_EXPORT bool              magic_bean_process_memory_write_string(MagicBeanProcess* process, uint64_t address, const char* lpValue);
+MAGIC_BEAN_EXPORT bool              magic_bean_process_memory_write_string(MagicBeanProcess* process, uint64_t address, const char* value);
 MAGIC_BEAN_EXPORT uint64_t          magic_bean_process_memory_find(MagicBeanProcess* process, const char* mask, const uint8_t* pattern);
 MAGIC_BEAN_EXPORT uint64_t          magic_bean_process_memory_find_at(MagicBeanProcess* process, const char* mask, const uint8_t* pattern, uint64_t address, uint64_t size);
 MAGIC_BEAN_EXPORT uint64_t          magic_bean_process_memory_allocate(MagicBeanProcess* process, uint64_t size);

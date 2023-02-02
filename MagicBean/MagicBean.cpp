@@ -466,7 +466,33 @@ bool              magic_bean_process_memory_read_double(MagicBeanProcess* proces
 {
 	return magic_bean_process_memory_read(process, address, lpValue, sizeof(double));
 }
-ssize_t           magic_bean_process_memory_read_string(MagicBeanProcess* process, uint64_t address, char* lpValue, size_t maxLength);
+ssize_t           magic_bean_process_memory_read_string(MagicBeanProcess* process, uint64_t address, char* lpValue, size_t maxLength)
+{
+	if (process == nullptr)
+	{
+
+		return -1;
+	}
+
+	ssize_t length = 0;
+
+	for (size_t i = 0; i < maxLength; ++i, ++lpValue, ++length)
+	{
+		if (!magic_bean_process_memory_read_uint8(process, address + i, reinterpret_cast<uint8_t*>(lpValue)))
+		{
+
+			return -1;
+		}
+
+		if (*lpValue == '\0')
+		{
+
+			break;
+		}
+	}
+
+	return length;
+}
 bool              magic_bean_process_memory_write(MagicBeanProcess* process, uint64_t address, const void* lpBuffer, uint64_t size);
 bool              magic_bean_process_memory_write_int8(MagicBeanProcess* process, uint64_t address, int8_t value)
 {
@@ -508,7 +534,10 @@ bool              magic_bean_process_memory_write_double(MagicBeanProcess* proce
 {
 	return magic_bean_process_memory_write(process, address, &value, sizeof(double));
 }
-bool              magic_bean_process_memory_write_string(MagicBeanProcess* process, uint64_t address, const char* lpValue);
+bool              magic_bean_process_memory_write_string(MagicBeanProcess* process, uint64_t address, const char* value)
+{
+	return magic_bean_process_memory_write(process, address, value, AL::String::GetLength(value) + 1);
+}
 uint64_t          magic_bean_process_memory_find(MagicBeanProcess* process, const char* mask, const uint8_t* pattern);
 uint64_t          magic_bean_process_memory_find_at(MagicBeanProcess* process, const char* mask, const uint8_t* pattern, uint64_t address, uint64_t size);
 uint64_t          magic_bean_process_memory_allocate(MagicBeanProcess* process, uint64_t size);
