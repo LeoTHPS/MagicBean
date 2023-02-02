@@ -6,6 +6,7 @@ SOURCE_FILES = MagicBean.cpp
 OBJECT_FILES = $(SOURCE_FILES:.cpp=.o)
 
 LDFLAGS      += -shared
+CPPFLAGS     += -DMAGIC_BEAN_API
 CXXFLAGS     += -Wall -Wfatal-errors -g -fPIC -std=c++20 -I. -I"$(AL_INCLUDE)"
 
 ifdef COMPILER

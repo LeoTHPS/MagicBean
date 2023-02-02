@@ -9,13 +9,13 @@ extern "C" {
 #endif
 
 #if defined(MAGIC_BEAN_API)
-	#if defined(MAGIC_BEAN_PLATFORM_WINDOWS)
+	#if defined(WIN32) || defined(_WIN32)
 		#define MAGIC_BEAN_EXPORT __declspec(dllexport)
 	#else
 		#define MAGIC_BEAN_EXPORT
 	#endif
 #else
-	#if defined(MAGIC_BEAN_PLATFORM_WINDOWS)
+	#if defined(WIN32) || defined(_WIN32)
 		#define MAGIC_BEAN_EXPORT __declspec(dllimport)
 	#else
 		#define MAGIC_BEAN_EXPORT
