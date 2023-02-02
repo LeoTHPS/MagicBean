@@ -511,6 +511,26 @@ MagicBeanProcess* magic_bean_process_open_by_id(MagicBean* magic, uint32_t id)
 		return nullptr;
 	}
 
+	try
+	{
+		if (!AL::OS::ProcessMemory::Open(process->Memory, process->Base, AL::OS::ProcessMemoryAccessFlags::All))
+		{
+			process->Base.Close();
+
+			delete process;
+
+			return nullptr;
+		}
+	}
+	catch (const AL::Exception& exception)
+	{
+		process->Base.Close();
+
+		delete process;
+
+		return nullptr;
+	}
+
 	magic->Processes.PushBack(
 		process
 	);
@@ -541,6 +561,26 @@ MagicBeanProcess* magic_bean_process_open_by_name(MagicBean* magic, const char* 
 	}
 	catch (const AL::Exception& exception)
 	{
+		delete process;
+
+		return nullptr;
+	}
+
+	try
+	{
+		if (!AL::OS::ProcessMemory::Open(process->Memory, process->Base, AL::OS::ProcessMemoryAccessFlags::All))
+		{
+			process->Base.Close();
+
+			delete process;
+
+			return nullptr;
+		}
+	}
+	catch (const AL::Exception& exception)
+	{
+		process->Base.Close();
+
 		delete process;
 
 		return nullptr;
