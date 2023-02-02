@@ -463,7 +463,7 @@ bool              magic_bean_process_memory_read(MagicBeanProcess* process, uint
 		{
 			process->Memory.Read(
 				static_cast<AL::OS::ProcessMemoryAddress>(address + totalBytesRead),
-				lpBuffer + totalBytesRead,
+				&reinterpret_cast<uint8_t*>(lpBuffer)[totalBytesRead],
 				static_cast<size_t>(numberOfBytesRead = ((numberOfBytesRemaining <= AL::Integer<size_t>::Maximum) ? numberOfBytesRemaining : AL::Integer<size_t>::Maximum))
 			);
 
@@ -560,7 +560,7 @@ bool              magic_bean_process_memory_write(MagicBeanProcess* process, uin
 		{
 			process->Memory.Write(
 				static_cast<AL::OS::ProcessMemoryAddress>(address + totalBytesWritten),
-				lpBuffer + totalBytesWritten,
+				&reinterpret_cast<const uint8_t*>(lpBuffer)[totalBytesWritten],
 				static_cast<size_t>(numberOfBytesWritten = ((numberOfBytesRemaining <= AL::Integer<size_t>::Maximum) ? numberOfBytesRemaining : AL::Integer<size_t>::Maximum))
 			);
 
