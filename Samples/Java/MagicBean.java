@@ -5,6 +5,10 @@ public class MagicBean {
 
 	public class ThreadInformation {
 		public int id;
+
+		public ThreadInformation(int id) {
+			this.id = id;
+		}
 	}
 
 	public interface ThreadEnumerateCallback {
@@ -14,6 +18,11 @@ public class MagicBean {
 	public class WindowInformation {
 		public String name;
 		public int    index;
+
+		public WindowInformation(String name, int index) {
+			this.name  = name;
+			this.index = index;
+		}
 	}
 
 	public interface WindowEnumerateCallback {
@@ -23,6 +32,11 @@ public class MagicBean {
 	public class ProcessInformation {
 		public int    id;
 		public String name;
+
+		public ProcessInformation(int id, String name) {
+			this.id   = id;
+			this.name = name;
+		}
 	}
 
 	public interface ProcessEnumerateCallback {
