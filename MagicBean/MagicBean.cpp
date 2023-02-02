@@ -769,7 +769,29 @@ uint64_t          magic_bean_process_memory_allocate_at(MagicBeanProcess* proces
 		return 0;
 	}
 }
-bool              magic_bean_process_memory_release(MagicBeanProcess* process, uint64_t address);
+bool              magic_bean_process_memory_release(MagicBeanProcess* process, uint64_t address)
+{
+	if (process == nullptr)
+	{
+
+		return false;
+	}
+
+	try
+	{
+		process->Memory.Release(
+			static_cast<AL::OS::ProcessMemoryAddress>(address),
+			0
+		);
+	}
+	catch (const AL::Exception& exception)
+	{
+
+		return false;
+	}
+
+	return true;
+}
 MagicBeanLibrary* magic_bean_process_library_open(MagicBeanProcess* process, const char* name)
 {
 	if (process == nullptr)
