@@ -2,6 +2,7 @@
 
 #include <AL/Common.hpp>
 
+#include <AL/OS/Timer.hpp>
 #include <AL/OS/Thread.hpp>
 #include <AL/OS/System.hpp>
 #include <AL/OS/Process.hpp>
@@ -11,6 +12,7 @@
 
 struct _MagicBean
 {
+	AL::OS::Timer                                  Timer;
 	AL::Collections::LinkedList<MagicBeanProcess*> Processes;
 };
 
@@ -80,6 +82,36 @@ uint32_t          magic_bean_get_current_process_id()
 	return static_cast<uint32_t>(
 		AL::OS::GetCurrentProcessId()
 	);
+}
+uint64_t          magic_bean_get_time_ms(MagicBean* magic)
+{
+	if (magic == nullptr)
+	{
+
+		return 0;
+	}
+
+	return magic->Timer.GetElapsed().ToMilliseconds();
+}
+uint64_t          magic_bean_get_time_us(MagicBean* magic)
+{
+	if (magic == nullptr)
+	{
+
+		return 0;
+	}
+
+	return magic->Timer.GetElapsed().ToMicroseconds();
+}
+uint64_t          magic_bean_get_timestamp(MagicBean* magic)
+{
+	if (magic == nullptr)
+	{
+
+		return 0;
+	}
+
+	return AL::OS::System::GetTimestamp().ToSeconds();
 }
 
 bool              magic_bean_thread_enumerate(MagicBeanProcess* process, magic_bean_thread_enumerate_callback callback, void* lpParam)

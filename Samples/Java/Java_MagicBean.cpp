@@ -16,6 +16,18 @@ extern "C" JNIEXPORT void JNICALL     Java_MagicBean_magic_bean_close(JNIEnv* jn
 {
 	magic_bean_close(reinterpret_cast<MagicBean*>(magic));
 }
+extern "C" JNIEXPORT jlong JNICALL    Java_MagicBean_magic_bean_get_time_ms(JNIEnv* jni, jclass clazz, jlong magic)
+{
+	return static_cast<jlong>(magic_bean_get_time_ms(reinterpret_cast<MagicBean*>(magic)));
+}
+extern "C" JNIEXPORT jlong JNICALL    Java_MagicBean_magic_bean_get_time_us(JNIEnv* jni, jclass clazz, jlong magic)
+{
+	return static_cast<jlong>(magic_bean_get_time_us(reinterpret_cast<MagicBean*>(magic)));
+}
+extern "C" JNIEXPORT jlong JNICALL    Java_MagicBean_magic_bean_get_timestamp(JNIEnv* jni, jclass clazz, jlong magic)
+{
+	return static_cast<jlong>(magic_bean_get_timestamp(reinterpret_cast<MagicBean*>(magic)));
+}
 extern "C" JNIEXPORT jint JNICALL     Java_MagicBean_magic_bean_get_current_thread_id(JNIEnv* jni, jclass clazz)
 {
 	return static_cast<jint>(

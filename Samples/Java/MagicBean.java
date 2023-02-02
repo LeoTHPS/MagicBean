@@ -52,6 +52,9 @@ public class MagicBean {
 
 	public static native long    magic_bean_open();
 	public static native void    magic_bean_close(long magic);
+	public static native long    magic_bean_get_time_ms(long magic);
+	public static native long    magic_bean_get_time_us(long magic);
+	public static native long    magic_bean_get_timestamp(long magic);
 	public static native int     magic_bean_get_current_thread_id();
 	public static native int     magic_bean_get_current_process_id();
 

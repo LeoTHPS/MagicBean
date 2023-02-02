@@ -177,6 +177,9 @@ void lua_init(AL::Lua543::State& lua)
 
 	lua_init_RegisterGlobalFunction(lua, magic_bean_open);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_close);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_get_time_ms);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_get_time_us);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_get_timestamp);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_get_current_thread_id);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_get_current_process_id);
 	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_is_null, "magic_bean_is_null");
