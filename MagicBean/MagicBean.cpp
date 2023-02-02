@@ -95,8 +95,10 @@ bool              magic_bean_thread_enumerate(MagicBeanProcess* process, magic_b
 	return false;
 #elif defined(AL_PLATFORM_WINDOWS)
 	HANDLE hSnapshot;
+
+	auto pid = process->Base.GetId();
 	
-	if ((hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, static_cast<DWORD>(process->Base.GetId()))) == INVALID_HANDLE_VALUE)
+	if ((hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, static_cast<DWORD>(pid))) == INVALID_HANDLE_VALUE)
 	{
 
 		return false;
@@ -111,6 +113,12 @@ bool              magic_bean_thread_enumerate(MagicBeanProcess* process, magic_b
 
 		do
 		{
+			if (entry.th32OwnerProcessID != pid)
+			{
+
+				continue;
+			}
+
 			information.ID = entry.th32ThreadID;
 
 			if (!callback(&information, lpParam))
