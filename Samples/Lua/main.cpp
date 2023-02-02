@@ -71,6 +71,22 @@ double _magic_bean_process_memory_read_double(MagicBeanProcess* process, uint64_
 	double value;
 	return magic_bean_process_memory_read_double(process, address, &value) ? value : 0;
 }
+AL::String _magic_bean_process_memory_read_string(MagicBeanProcess* process, uint64_t address, size_t maxLength)
+{
+	AL::Collections::Array<AL::String::Char> buffer(maxLength);
+	ssize_t                                  bufferSize;
+
+	if ((bufferSize = magic_bean_process_memory_read_string(process, address, &buffer[0], maxLength)) == -1)
+	{
+
+		bufferSize = 0;
+	}
+
+	return AL::String(
+		&buffer[0],
+		static_cast<size_t>(bufferSize)
+	);
+}
 
 // @throw AL::Exception
 void lua_init(AL::Lua543::State& lua)
@@ -119,6 +135,7 @@ void lua_init(AL::Lua543::State& lua)
 	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_uint64, "magic_bean_process_memory_read_uint64");
 	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_float,  "magic_bean_process_memory_read_float");
 	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_double, "magic_bean_process_memory_read_double");
+	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_string, "magic_bean_process_memory_read_string");
 	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write);
 	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_int8);
 	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_int16);
@@ -130,6 +147,7 @@ void lua_init(AL::Lua543::State& lua)
 	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_uint64);
 	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_float);
 	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_double);
+	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_string);
 	lua_init_RegisterGlobal(lua, magic_bean_process_memory_find);
 	lua_init_RegisterGlobal(lua, magic_bean_process_memory_find_at);
 	lua_init_RegisterGlobal(lua, magic_bean_process_memory_allocate);

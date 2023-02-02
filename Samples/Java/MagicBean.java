@@ -80,6 +80,7 @@ public class MagicBean {
 	public static native long    magic_bean_process_memory_read_uint64(long process, long address) throws Exception;
 	public static native float   magic_bean_process_memory_read_float(long process, long address) throws Exception;
 	public static native double  magic_bean_process_memory_read_double(long process, long address) throws Exception;
+	public static native String  magic_bean_process_memory_read_string(long process, long address, int maxLength) throws Exception;
 	public static native boolean magic_bean_process_memory_write(long process, long address, byte[] buffer, int offset, int size);
 	public static native boolean magic_bean_process_memory_write_int8(long process, long address, byte value);
 	public static native boolean magic_bean_process_memory_write_int16(long process, long address, short value);
@@ -91,6 +92,7 @@ public class MagicBean {
 	public static native boolean magic_bean_process_memory_write_uint64(long process, long address, long value);
 	public static native boolean magic_bean_process_memory_write_float(long process, long address, float value);
 	public static native boolean magic_bean_process_memory_write_double(long process, long address, double value);
+	public static native boolean magic_bean_process_memory_write_string(long process, long address, String value);
 	public static native long    magic_bean_process_memory_find(long process, String mask, byte[] pattern);
 	public static native long    magic_bean_process_memory_find_at(long process, String mask, byte[] pattern, long address, long size);
 	public static native long    magic_bean_process_memory_allocate(long process, long size);
