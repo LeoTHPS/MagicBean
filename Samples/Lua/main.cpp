@@ -6,13 +6,23 @@
 
 #include <MagicBean/MagicBean.h>
 
-typedef bool(*_magic_bean_process_enumerate_callback)(uint32_t id, const char* name);
+typedef bool(_magic_bean_process_enumerate_callback)(uint32_t id, const char* name);
+typedef AL::Lua543::Function::LuaCallback<_magic_bean_process_enumerate_callback> _magic_bean_process_enumerate_callback_lua;
 
-bool _magic_bean_process_enumerate(MagicBean* magic, _magic_bean_process_enumerate_callback callback)
+bool       _magic_bean_is_null(void* lpUserData)
+{
+	return lpUserData == nullptr;
+}
+uint64_t   _magic_bean_to_number(void* lpUserData)
+{
+	return reinterpret_cast<uint64_t>(lpUserData);
+}
+
+bool       _magic_bean_process_enumerate(MagicBean* magic, _magic_bean_process_enumerate_callback_lua callback)
 {
 	magic_bean_process_enumerate_callback _callback = [](const MagicBeanProcessInformation* _lpInformation, void* _lpParam)
 	{
-		return (*reinterpret_cast<_magic_bean_process_enumerate_callback*>(_lpParam))(
+		return (*reinterpret_cast<const _magic_bean_process_enumerate_callback_lua*>(_lpParam))(
 			_lpInformation->ID,
 			_lpInformation->Name
 		);
@@ -21,52 +31,52 @@ bool _magic_bean_process_enumerate(MagicBean* magic, _magic_bean_process_enumera
 	return magic_bean_process_enumerate(magic, _callback, &callback);
 }
 
-int8_t _magic_bean_process_memory_read_int8(MagicBeanProcess* process, uint64_t address)
+int8_t     _magic_bean_process_memory_read_int8(MagicBeanProcess* process, uint64_t address)
 {
 	int8_t value;
 	return magic_bean_process_memory_read_int8(process, address, &value) ? value : 0;
 }
-int16_t _magic_bean_process_memory_read_int16(MagicBeanProcess* process, uint64_t address)
+int16_t    _magic_bean_process_memory_read_int16(MagicBeanProcess* process, uint64_t address)
 {
 	int16_t value;
 	return magic_bean_process_memory_read_int16(process, address, &value) ? value : 0;
 }
-int32_t _magic_bean_process_memory_read_int32(MagicBeanProcess* process, uint64_t address)
+int32_t    _magic_bean_process_memory_read_int32(MagicBeanProcess* process, uint64_t address)
 {
 	int32_t value;
 	return magic_bean_process_memory_read_int32(process, address, &value) ? value : 0;
 }
-int64_t _magic_bean_process_memory_read_int64(MagicBeanProcess* process, uint64_t address)
+int64_t    _magic_bean_process_memory_read_int64(MagicBeanProcess* process, uint64_t address)
 {
 	int64_t value;
 	return magic_bean_process_memory_read_int64(process, address, &value) ? value : 0;
 }
-uint8_t _magic_bean_process_memory_read_uint8(MagicBeanProcess* process, uint64_t address)
+uint8_t    _magic_bean_process_memory_read_uint8(MagicBeanProcess* process, uint64_t address)
 {
 	uint8_t value;
 	return magic_bean_process_memory_read_uint8(process, address, &value) ? value : 0;
 }
-uint16_t _magic_bean_process_memory_read_uint16(MagicBeanProcess* process, uint64_t address)
+uint16_t   _magic_bean_process_memory_read_uint16(MagicBeanProcess* process, uint64_t address)
 {
 	uint16_t value;
 	return magic_bean_process_memory_read_uint16(process, address, &value) ? value : 0;
 }
-uint32_t _magic_bean_process_memory_read_uint32(MagicBeanProcess* process, uint64_t address)
+uint32_t   _magic_bean_process_memory_read_uint32(MagicBeanProcess* process, uint64_t address)
 {
 	uint32_t value;
 	return magic_bean_process_memory_read_uint32(process, address, &value) ? value : 0;
 }
-uint64_t _magic_bean_process_memory_read_uint64(MagicBeanProcess* process, uint64_t address)
+uint64_t   _magic_bean_process_memory_read_uint64(MagicBeanProcess* process, uint64_t address)
 {
 	uint64_t value;
 	return magic_bean_process_memory_read_uint64(process, address, &value) ? value : 0;
 }
-float _magic_bean_process_memory_read_float(MagicBeanProcess* process, uint64_t address)
+float      _magic_bean_process_memory_read_float(MagicBeanProcess* process, uint64_t address)
 {
 	float value;
 	return magic_bean_process_memory_read_float(process, address, &value) ? value : 0;
 }
-double _magic_bean_process_memory_read_double(MagicBeanProcess* process, uint64_t address)
+double     _magic_bean_process_memory_read_double(MagicBeanProcess* process, uint64_t address)
 {
 	double value;
 	return magic_bean_process_memory_read_double(process, address, &value) ? value : 0;
@@ -109,6 +119,8 @@ void lua_init(AL::Lua543::State& lua)
 
 	lua_init_RegisterGlobalFunction(lua, magic_bean_open);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_close);
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_is_null, "magic_bean_is_null");
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_to_number, "magic_bean_to_number");
 
 	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_enumerate);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_create);

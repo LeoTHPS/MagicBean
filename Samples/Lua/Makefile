@@ -1,10 +1,12 @@
-RM           ?= rm -f
-CXX          ?= g++
+CP             ?= cp -f
+RM             ?= rm -f
+CXX            ?= g++
 
-SOURCE_FILES = main.cpp
-OBJECT_FILES = $(SOURCE_FILES:.cpp=.o)
+SOURCE_FILES   = main.cpp
+OBJECT_FILES   = $(SOURCE_FILES:.cpp=.o)
+LIB_MAGIC_BEAN = MagicBean
 
-CXXFLAGS     += -Wall -Wfatal-errors -g -std=c++20 -I. -I"../../" -I"$(AL_INCLUDE)"
+CXXFLAGS       += -Wall -Wfatal-errors -g -std=c++20 -I. -I"../../" -I"$(AL_INCLUDE)"
 
 ifdef COMPILER
 	ifeq ($(COMPILER), GNU)
@@ -18,13 +20,15 @@ endif
 
 ifdef PLATFORM
 	ifeq ($(PLATFORM), LINUX)
-		LDLIBS += -lpthread -llua5.4
-		LDLIBS += "../../MagicBean/MagicBean.so"
+		LDLIBS        += -lpthread -llua5.4
+		LDLIBS        += "../../MagicBean/MagicBean.so"
+		LIB_MAGIC_BEAN = "../../MagicBean/MagicBean.so"
 	endif
 
 	ifeq ($(PLATFORM), WINDOWS)
-		LDLIBS += -luser32 -llua
-		LDLIBS += "../../MagicBean/MagicBean.dll"
+		LDLIBS        += -luser32 -llua
+		LDLIBS        += "../../MagicBean/MagicBean.dll"
+		LIB_MAGIC_BEAN = "../../MagicBean/MagicBean.dll"
 	endif
 endif
 
@@ -32,6 +36,7 @@ endif
 
 MagicBean: $(OBJECT_FILES)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
+	$(CP) $(LIB_MAGIC_BEAN) .
 
 clean:
 	$(RM) $(OBJECT_FILES)
