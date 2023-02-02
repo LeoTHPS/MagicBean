@@ -45,6 +45,18 @@ typedef struct _MagicBeanProcessInformation
 	const char* Name;
 } MagicBeanProcessInformation;
 
+typedef enum _MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPES : uint8_t
+{
+	MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_NONE,
+
+	MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_READ,
+	MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_READ_WRITE,
+
+	MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE,
+	MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE_READ,
+	MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE_READ_WRITE
+} MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPES;
+
 // @return false to stop
 typedef bool(*magic_bean_thread_enumerate_callback)(const MagicBeanThreadInformation* lpInformation, void* lpParam);
 // @return false to stop
@@ -105,8 +117,8 @@ MAGIC_BEAN_EXPORT bool              magic_bean_process_memory_write_double(Magic
 MAGIC_BEAN_EXPORT bool              magic_bean_process_memory_write_string(MagicBeanProcess* process, uint64_t address, const char* value);
 MAGIC_BEAN_EXPORT uint64_t          magic_bean_process_memory_find(MagicBeanProcess* process, const char* mask, const uint8_t* pattern);
 MAGIC_BEAN_EXPORT uint64_t          magic_bean_process_memory_find_at(MagicBeanProcess* process, const char* mask, const uint8_t* pattern, uint64_t address, uint64_t size);
-MAGIC_BEAN_EXPORT uint64_t          magic_bean_process_memory_allocate(MagicBeanProcess* process, uint64_t size);
-MAGIC_BEAN_EXPORT uint64_t          magic_bean_process_memory_allocate_at(MagicBeanProcess* process, uint64_t address, uint64_t size);
+MAGIC_BEAN_EXPORT uint64_t          magic_bean_process_memory_allocate(MagicBeanProcess* process, uint64_t size, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPES type);
+MAGIC_BEAN_EXPORT uint64_t          magic_bean_process_memory_allocate_at(MagicBeanProcess* process, uint64_t address, uint64_t size, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPES type);
 MAGIC_BEAN_EXPORT bool              magic_bean_process_memory_release(MagicBeanProcess* process, uint64_t address);
 MAGIC_BEAN_EXPORT MagicBeanLibrary* magic_bean_process_library_open(MagicBeanProcess* process, const char* name);
 MAGIC_BEAN_EXPORT void              magic_bean_process_library_close(MagicBeanLibrary* library);

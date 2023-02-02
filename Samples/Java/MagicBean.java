@@ -43,6 +43,13 @@ public class MagicBean {
 		boolean callback(ProcessInformation information);
 	}
 
+	public static final byte MEMORY_PROTECTION_TYPE_NONE               = 0;
+	public static final byte MEMORY_PROTECTION_TYPE_READ               = 1;
+	public static final byte MEMORY_PROTECTION_TYPE_READ_WRITE         = 2;
+	public static final byte MEMORY_PROTECTION_TYPE_EXECUTE            = 3;
+	public static final byte MEMORY_PROTECTION_TYPE_EXECUTE_READ       = 4;
+	public static final byte MEMORY_PROTECTION_TYPE_EXECUTE_READ_WRITE = 5;
+
 	public static native long    magic_bean_open();
 	public static native void    magic_bean_close(long magic);
 
@@ -96,8 +103,8 @@ public class MagicBean {
 	public static native boolean magic_bean_process_memory_write_string(long process, long address, String value);
 	public static native long    magic_bean_process_memory_find(long process, String mask, byte[] pattern);
 	public static native long    magic_bean_process_memory_find_at(long process, String mask, byte[] pattern, long address, long size);
-	public static native long    magic_bean_process_memory_allocate(long process, long size);
-	public static native long    magic_bean_process_memory_allocate_at(long process, long address, long size);
+	public static native long    magic_bean_process_memory_allocate(long process, long size, byte type);
+	public static native long    magic_bean_process_memory_allocate_at(long process, long address, long size, byte type);
 	public static native boolean magic_bean_process_memory_release(long process, long address);
 	public static native long    magic_bean_process_library_open(long process, String name);
 	public static native void    magic_bean_process_library_close(long library);

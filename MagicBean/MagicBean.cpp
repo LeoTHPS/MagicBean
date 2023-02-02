@@ -730,8 +730,45 @@ bool              magic_bean_process_memory_write_string(MagicBeanProcess* proce
 }
 uint64_t          magic_bean_process_memory_find(MagicBeanProcess* process, const char* mask, const uint8_t* pattern);
 uint64_t          magic_bean_process_memory_find_at(MagicBeanProcess* process, const char* mask, const uint8_t* pattern, uint64_t address, uint64_t size);
-uint64_t          magic_bean_process_memory_allocate(MagicBeanProcess* process, uint64_t size);
-uint64_t          magic_bean_process_memory_allocate_at(MagicBeanProcess* process, uint64_t address, uint64_t size);
+uint64_t          magic_bean_process_memory_allocate(MagicBeanProcess* process, uint64_t size, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPES type)
+{
+	return magic_bean_process_memory_allocate_at(process, 0, size, type);
+}
+uint64_t          magic_bean_process_memory_allocate_at(MagicBeanProcess* process, uint64_t address, uint64_t size, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPES type)
+{
+	if (process == nullptr)
+	{
+
+		return 0;
+	}
+
+	try
+	{
+		return process->Memory.Allocate(
+			static_cast<AL::OS::ProcessMemoryAddress>(address),
+			static_cast<AL::size_t>(size),
+			[type]() -> AL::OS::ProcessMemoryProtectionTypes
+			{
+				switch (type)
+				{
+					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_NONE:               return AL::OS::ProcessMemoryProtectionTypes::None;
+					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_READ:               return AL::OS::ProcessMemoryProtectionTypes::Read;
+					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_READ_WRITE:         return AL::OS::ProcessMemoryProtectionTypes::ReadWrite;
+					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE:            return AL::OS::ProcessMemoryProtectionTypes::Execute;
+					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE_READ:       return AL::OS::ProcessMemoryProtectionTypes::ExecuteRead;
+					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE_READ_WRITE: return AL::OS::ProcessMemoryProtectionTypes::ExecuteReadWrite;
+				}
+
+				return AL::OS::ProcessMemoryProtectionTypes::None;
+			}()
+		);
+	}
+	catch (const AL::Exception& exception)
+	{
+
+		return 0;
+	}
+}
 bool              magic_bean_process_memory_release(MagicBeanProcess* process, uint64_t address);
 MagicBeanLibrary* magic_bean_process_library_open(MagicBeanProcess* process, const char* name)
 {

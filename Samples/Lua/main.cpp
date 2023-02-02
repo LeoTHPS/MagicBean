@@ -91,75 +91,84 @@ AL::String _magic_bean_process_memory_read_string(MagicBeanProcess* process, uin
 // @throw AL::Exception
 void lua_init(AL::Lua543::State& lua)
 {
-	#define lua_init_RegisterGlobal(__lua__, __func__)             lua.SetGlobalFunction<__func__>(#__func__)
-	#define lua_init_RegisterGlobalAs(__lua__, __func__, __name__) lua.SetGlobalFunction<__func__>(__name__)
+	#define lua_init_RegisterGlobal(__lua__, __value__)                    lua.SetGlobal(#__value__, __value__)
+	#define lua_init_RegisterGlobalAs(__lua__, __value__, __name__)        lua.SetGlobal(__name__, __value__)
+	#define lua_init_RegisterGlobalFunction(__lua__, __func__)             lua.SetGlobalFunction<__func__>(#__func__)
+	#define lua_init_RegisterGlobalFunctionAs(__lua__, __func__, __name__) lua.SetGlobalFunction<__func__>(__name__)
 
 	lua.Create();
 
 	luaL_openlibs(lua.GetHandle());
 
-	lua_init_RegisterGlobal(lua, magic_bean_open);
-	lua_init_RegisterGlobal(lua, magic_bean_close);
+	lua_init_RegisterGlobal(lua, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_NONE);
+	lua_init_RegisterGlobal(lua, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_READ);
+	lua_init_RegisterGlobal(lua, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_READ_WRITE);
+	lua_init_RegisterGlobal(lua, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE);
+	lua_init_RegisterGlobal(lua, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE_READ);
+	lua_init_RegisterGlobal(lua, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE_READ_WRITE);
 
-	lua_init_RegisterGlobal(lua, magic_bean_thread_enumerate);
-	lua_init_RegisterGlobal(lua, magic_bean_thread_create);
-	lua_init_RegisterGlobal(lua, magic_bean_thread_open_by_id);
-	lua_init_RegisterGlobal(lua, magic_bean_thread_close);
-	lua_init_RegisterGlobal(lua, magic_bean_thread_resume);
-	lua_init_RegisterGlobal(lua, magic_bean_thread_suspend);
-	lua_init_RegisterGlobal(lua, magic_bean_thread_terminate);
-	lua_init_RegisterGlobal(lua, magic_bean_thread_get_exit_code);
-	lua_init_RegisterGlobal(lua, magic_bean_thread_wait_for_exit);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_open);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_close);
 
-	lua_init_RegisterGlobal(lua, magic_bean_window_enumerate);
-	lua_init_RegisterGlobal(lua, magic_bean_window_open_by_name);
-	lua_init_RegisterGlobal(lua, magic_bean_window_open_by_index);
-	lua_init_RegisterGlobal(lua, magic_bean_window_close);
-	lua_init_RegisterGlobal(lua, magic_bean_window_get_name);
-	lua_init_RegisterGlobal(lua, magic_bean_window_set_name);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_enumerate);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_create);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_open_by_id);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_close);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_resume);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_suspend);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_terminate);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_get_exit_code);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_wait_for_exit);
 
-	lua_init_RegisterGlobalAs(lua, _magic_bean_process_enumerate, "magic_bean_process_enumerate");
-	lua_init_RegisterGlobal(lua, magic_bean_process_open_by_id);
-	lua_init_RegisterGlobal(lua, magic_bean_process_open_by_name);
-	lua_init_RegisterGlobal(lua, magic_bean_process_close);
-	lua_init_RegisterGlobal(lua, magic_bean_process_resume);
-	lua_init_RegisterGlobal(lua, magic_bean_process_suspend);
-	lua_init_RegisterGlobal(lua, magic_bean_process_set_debugger_present);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_read);
-	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_int8,   "magic_bean_process_memory_read_int8");
-	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_int16,  "magic_bean_process_memory_read_int16");
-	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_int32,  "magic_bean_process_memory_read_int32");
-	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_int64,  "magic_bean_process_memory_read_int64");
-	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_uint8,  "magic_bean_process_memory_read_uint8");
-	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_uint16, "magic_bean_process_memory_read_uint16");
-	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_uint32, "magic_bean_process_memory_read_uint32");
-	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_uint64, "magic_bean_process_memory_read_uint64");
-	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_float,  "magic_bean_process_memory_read_float");
-	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_double, "magic_bean_process_memory_read_double");
-	lua_init_RegisterGlobalAs(lua, _magic_bean_process_memory_read_string, "magic_bean_process_memory_read_string");
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_int8);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_int16);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_int32);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_int64);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_uint8);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_uint16);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_uint32);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_uint64);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_float);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_double);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_write_string);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_find);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_find_at);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_allocate);
-	lua_init_RegisterGlobal(lua, magic_bean_process_memory_release);
-	lua_init_RegisterGlobal(lua, magic_bean_process_library_open);
-	lua_init_RegisterGlobal(lua, magic_bean_process_library_close);
-	lua_init_RegisterGlobal(lua, magic_bean_process_library_load_file);
-	lua_init_RegisterGlobal(lua, magic_bean_process_library_load_buffer);
-	lua_init_RegisterGlobal(lua, magic_bean_process_library_load_memory);
-	lua_init_RegisterGlobal(lua, magic_bean_process_library_unload);
-	lua_init_RegisterGlobal(lua, magic_bean_process_library_get_export);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_window_enumerate);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_window_open_by_name);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_window_open_by_index);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_window_close);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_window_get_name);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_window_set_name);
+
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_enumerate, "magic_bean_process_enumerate");
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_open_by_id);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_open_by_name);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_close);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_resume);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_suspend);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_set_debugger_present);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_read);
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_memory_read_int8,   "magic_bean_process_memory_read_int8");
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_memory_read_int16,  "magic_bean_process_memory_read_int16");
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_memory_read_int32,  "magic_bean_process_memory_read_int32");
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_memory_read_int64,  "magic_bean_process_memory_read_int64");
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_memory_read_uint8,  "magic_bean_process_memory_read_uint8");
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_memory_read_uint16, "magic_bean_process_memory_read_uint16");
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_memory_read_uint32, "magic_bean_process_memory_read_uint32");
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_memory_read_uint64, "magic_bean_process_memory_read_uint64");
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_memory_read_float,  "magic_bean_process_memory_read_float");
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_memory_read_double, "magic_bean_process_memory_read_double");
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_memory_read_string, "magic_bean_process_memory_read_string");
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_write);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_write_int8);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_write_int16);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_write_int32);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_write_int64);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_write_uint8);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_write_uint16);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_write_uint32);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_write_uint64);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_write_float);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_write_double);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_write_string);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_find);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_find_at);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_allocate);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_release);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_library_open);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_library_close);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_library_load_file);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_library_load_buffer);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_library_load_memory);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_library_unload);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_library_get_export);
 }
 
 // @throw AL::Exception

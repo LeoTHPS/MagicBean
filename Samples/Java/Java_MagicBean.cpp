@@ -654,13 +654,13 @@ extern "C" JNIEXPORT jlong JNICALL    Java_MagicBean_magic_bean_process_memory_f
 		value
 	);
 }
-extern "C" JNIEXPORT jlong JNICALL    Java_MagicBean_magic_bean_process_memory_allocate(JNIEnv* jni, jclass clazz, jlong process, jlong size)
+extern "C" JNIEXPORT jlong JNICALL    Java_MagicBean_magic_bean_process_memory_allocate(JNIEnv* jni, jclass clazz, jlong process, jlong size, jbyte type)
 {
-	return static_cast<jlong>(magic_bean_process_memory_allocate(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(size)));
+	return static_cast<jlong>(magic_bean_process_memory_allocate(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(size), static_cast<MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPES>(type)));
 }
-extern "C" JNIEXPORT jlong JNICALL    Java_MagicBean_magic_bean_process_memory_allocate_at(JNIEnv* jni, jclass clazz, jlong process, jlong address, jlong size)
+extern "C" JNIEXPORT jlong JNICALL    Java_MagicBean_magic_bean_process_memory_allocate_at(JNIEnv* jni, jclass clazz, jlong process, jlong address, jlong size, jbyte type)
 {
-	return static_cast<jlong>(magic_bean_process_memory_allocate_at(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), static_cast<uint64_t>(size)));
+	return static_cast<jlong>(magic_bean_process_memory_allocate_at(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint64_t>(address), static_cast<uint64_t>(size), static_cast<MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPES>(type)));
 }
 extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_memory_release(JNIEnv* jni, jclass clazz, jlong process, jlong address)
 {
