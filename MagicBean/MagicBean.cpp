@@ -97,7 +97,7 @@ bool              magic_bean_thread_enumerate(MagicBeanProcess* process, magic_b
 	HANDLE hSnapshot;
 
 	auto pid = process->Base.GetId();
-	
+
 	if ((hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, static_cast<DWORD>(pid))) == INVALID_HANDLE_VALUE)
 	{
 
