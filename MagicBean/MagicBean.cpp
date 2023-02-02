@@ -43,6 +43,7 @@ struct _MagicBeanWindow
 struct _MagicBeanProcess
 {
 	AL::OS::Process                                Base;
+	AL::OS::ProcessMemory                          Memory;
 	MagicBean*                                     lpMagic;
 	AL::Collections::LinkedList<MagicBeanThread*>  Threads;
 	AL::Collections::LinkedList<MagicBeanWindow*>  Windows;
@@ -371,6 +372,8 @@ void              magic_bean_process_close(MagicBeanProcess* process)
 		for (auto it = process->Libraries.begin(); it != process->Libraries.end(); )
 			magic_bean_process_library_close(*(it++));
 
+		process->Memory.Close();
+
 		process->lpMagic->Processes.Remove(
 			process
 		);
@@ -446,7 +449,36 @@ bool              magic_bean_process_set_debugger_present(MagicBeanProcess* proc
 
 	return false;
 }
-bool              magic_bean_process_memory_read(MagicBeanProcess* process, uint64_t address, void* lpBuffer, uint64_t size);
+bool              magic_bean_process_memory_read(MagicBeanProcess* process, uint64_t address, void* lpBuffer, uint64_t size)
+{
+	if (process == nullptr)
+	{
+
+		return false;
+	}
+
+	try
+	{
+		for (uint64_t totalBytesRead = 0, numberOfBytesRead, numberOfBytesRemaining = size; totalBytesRead < size; )
+		{
+			process->Memory.Read(
+				static_cast<AL::OS::ProcessMemoryAddress>(address + totalBytesRead),
+				lpBuffer + totalBytesRead,
+				static_cast<size_t>(numberOfBytesRead = ((numberOfBytesRemaining <= AL::Integer<size_t>::Maximum) ? numberOfBytesRemaining : AL::Integer<size_t>::Maximum))
+			);
+
+			totalBytesRead         += numberOfBytesRead;
+			numberOfBytesRemaining -= numberOfBytesRead;
+		}
+	}
+	catch (const AL::Exception& exception)
+	{
+
+		return false;
+	}
+
+	return true;
+}
 bool              magic_bean_process_memory_read_int8(MagicBeanProcess* process, uint64_t address, int8_t* lpValue)
 {
 	return magic_bean_process_memory_read(process, address, lpValue, sizeof(int8_t));
@@ -514,7 +546,36 @@ ssize_t           magic_bean_process_memory_read_string(MagicBeanProcess* proces
 
 	return length;
 }
-bool              magic_bean_process_memory_write(MagicBeanProcess* process, uint64_t address, const void* lpBuffer, uint64_t size);
+bool              magic_bean_process_memory_write(MagicBeanProcess* process, uint64_t address, const void* lpBuffer, uint64_t size)
+{
+	if (process == nullptr)
+	{
+
+		return false;
+	}
+
+	try
+	{
+		for (uint64_t totalBytesWritten = 0, numberOfBytesWritten, numberOfBytesRemaining = size; totalBytesWritten < size; )
+		{
+			process->Memory.Write(
+				static_cast<AL::OS::ProcessMemoryAddress>(address + totalBytesWritten),
+				lpBuffer + totalBytesWritten,
+				static_cast<size_t>(numberOfBytesWritten = ((numberOfBytesRemaining <= AL::Integer<size_t>::Maximum) ? numberOfBytesRemaining : AL::Integer<size_t>::Maximum))
+			);
+
+			totalBytesWritten      += numberOfBytesWritten;
+			numberOfBytesRemaining -= numberOfBytesWritten;
+		}
+	}
+	catch (const AL::Exception& exception)
+	{
+
+		return false;
+	}
+
+	return true;
+}
 bool              magic_bean_process_memory_write_int8(MagicBeanProcess* process, uint64_t address, int8_t value)
 {
 	return magic_bean_process_memory_write(process, address, &value, sizeof(int8_t));
