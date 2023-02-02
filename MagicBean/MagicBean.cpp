@@ -16,6 +16,7 @@ struct _MagicBean
 
 struct _MagicBeanThread
 {
+	uint32_t          ID;
 #if defined(AL_PLATFORM_LINUX)
 
 #elif defined(AL_PLATFORM_WINDOWS)
@@ -113,8 +114,7 @@ bool              magic_bean_thread_enumerate(MagicBeanProcess* process, magic_b
 
 	return true;
 }
-MagicBeanThread*  magic_bean_thread_create(MagicBeanProcess* process, uint64_t address, uint64_t lpParam);
-MagicBeanThread*  magic_bean_thread_open_by_id(MagicBeanProcess* process, uint32_t id)
+MagicBeanThread*  magic_bean_thread_create(MagicBeanProcess* process, uint64_t address, uint64_t lpParam)
 {
 	if (process == nullptr)
 	{
@@ -128,7 +128,39 @@ MagicBeanThread*  magic_bean_thread_open_by_id(MagicBeanProcess* process, uint32
 	};
 
 #if defined(AL_PLATFORM_LINUX)
-	// TODO: implement
+	delete thread; // TODO: implement
+	return nullptr;
+#elif defined(AL_PLATFORM_WINDOWS)
+	DWORD threadID;
+
+	if ((thread->hThread = CreateRemoteThread(process->Base.GetHandle(), nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(address), reinterpret_cast<LPVOID>(lpParam), 0, &threadID)) == NULL)
+	{
+		delete thread;
+
+		return nullptr;
+	}
+
+	thread->ID = threadID;
+#endif
+
+	return thread;
+}
+MagicBeanThread*  magic_bean_thread_open_by_id(MagicBeanProcess* process, uint32_t id)
+{
+	if (process == nullptr)
+	{
+
+		return nullptr;
+	}
+
+	auto thread = new MagicBeanThread
+	{
+		.ID        = id,
+		.lpProcess = process
+	};
+
+#if defined(AL_PLATFORM_LINUX)
+	delete thread; // TODO: implement
 	return nullptr;
 #elif defined(AL_PLATFORM_WINDOWS)
 	if ((thread->hThread = OpenThread(THREAD_ALL_ACCESS, FALSE, static_cast<DWORD>(id))) == NULL)
