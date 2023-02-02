@@ -143,6 +143,10 @@ MagicBeanThread*  magic_bean_thread_create(MagicBeanProcess* process, uint64_t a
 	thread->ID = threadID;
 #endif
 
+	process->Threads.PushBack(
+		thread
+	);
+
 	return thread;
 }
 MagicBeanThread*  magic_bean_thread_open_by_id(MagicBeanProcess* process, uint32_t id)
@@ -170,6 +174,10 @@ MagicBeanThread*  magic_bean_thread_open_by_id(MagicBeanProcess* process, uint32
 		return nullptr;
 	}
 #endif
+
+	process->Threads.PushBack(
+		thread
+	);
 
 	return thread;
 }
@@ -389,8 +397,76 @@ bool              magic_bean_window_set_name(MagicBeanWindow* window, const char
 }
 
 bool              magic_bean_process_enumerate(MagicBean* magic, magic_bean_process_enumerate_callback callback, void* lpParam);
-MagicBeanProcess* magic_bean_process_open_by_id(MagicBean* magic, uint32_t id);
-MagicBeanProcess* magic_bean_process_open_by_name(MagicBean* magic, const char* name);
+MagicBeanProcess* magic_bean_process_open_by_id(MagicBean* magic, uint32_t id)
+{
+	if (magic == nullptr)
+	{
+
+		return nullptr;
+	}
+
+	auto process = new MagicBeanProcess
+	{
+		.lpMagic = magic
+	};
+
+	try
+	{
+		if (!AL::OS::Process::Open(process->Base, static_cast<AL::OS::ProcessId>(id)))
+		{
+			delete process;
+
+			return nullptr;
+		}
+	}
+	catch (const AL::Exception& exception)
+	{
+		delete process;
+
+		return nullptr;
+	}
+
+	magic->Processes.PushBack(
+		process
+	);
+
+	return process;
+}
+MagicBeanProcess* magic_bean_process_open_by_name(MagicBean* magic, const char* name)
+{
+	if (magic == nullptr)
+	{
+
+		return nullptr;
+	}
+
+	auto process = new MagicBeanProcess
+	{
+		.lpMagic = magic
+	};
+
+	try
+	{
+		if (!AL::OS::Process::Open(process->Base, name))
+		{
+			delete process;
+
+			return nullptr;
+		}
+	}
+	catch (const AL::Exception& exception)
+	{
+		delete process;
+
+		return nullptr;
+	}
+
+	magic->Processes.PushBack(
+		process
+	);
+
+	return process;
+}
 void              magic_bean_process_close(MagicBeanProcess* process)
 {
 	if (process != nullptr)
