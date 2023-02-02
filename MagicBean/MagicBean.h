@@ -70,6 +70,7 @@ MAGIC_BEAN_EXPORT MagicBeanWindow*  magic_bean_window_open_by_name(MagicBeanProc
 MAGIC_BEAN_EXPORT MagicBeanWindow*  magic_bean_window_open_by_index(MagicBeanProcess* process, size_t index);
 MAGIC_BEAN_EXPORT void              magic_bean_window_close(MagicBeanWindow* window);
 MAGIC_BEAN_EXPORT const char*       magic_bean_window_get_name(MagicBeanWindow* window);
+MAGIC_BEAN_EXPORT bool              magic_bean_window_set_name(MagicBeanWindow* window, const char* value);
 
 MAGIC_BEAN_EXPORT bool              magic_bean_process_enumerate(MagicBean* magic, magic_bean_process_enumerate_callback callback, void* lpParam);
 MAGIC_BEAN_EXPORT MagicBeanProcess* magic_bean_process_open_by_id(MagicBean* magic, uint32_t id);

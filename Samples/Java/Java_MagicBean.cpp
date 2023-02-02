@@ -197,6 +197,26 @@ extern "C" JNIEXPORT jstring JNICALL  Java_MagicBean_magic_bean_window_get_name(
 
 	return nullptr;
 }
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_window_set_name(JNIEnv* jni, jclass clazz, jlong window, jstring value)
+{
+	auto lpValue = jni_GetUTFString(
+		jni,
+		value
+	);
+
+	auto _value = magic_bean_window_set_name(
+		reinterpret_cast<MagicBeanWindow*>(window),
+		lpValue
+	);
+
+	jni_ReleaseUTFString(
+		jni,
+		value,
+		lpValue
+	);
+
+	return _value;
+}
 
 extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_enumerate(JNIEnv* jni, jclass clazz, jlong magic, jobject callback)
 {

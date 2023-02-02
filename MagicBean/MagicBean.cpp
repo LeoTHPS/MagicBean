@@ -333,6 +333,27 @@ const char*       magic_bean_window_get_name(MagicBeanWindow* window)
 
 	return lastWindowTitle.GetCString();
 }
+bool              magic_bean_window_set_name(MagicBeanWindow* window, const char* value)
+{
+	if (window == nullptr)
+	{
+
+		return false;
+	}
+
+#if defined(SAL_PLATFORM_LINUX)
+	// TODO: implement
+	return false;
+#elif defined(AL_PLATFORM_WINDOWS)
+	if (!SetWindowTextA(window->hWND, value))
+	{
+
+		return false;
+	}
+#endif
+
+	return true;
+}
 
 bool              magic_bean_process_enumerate(MagicBean* magic, magic_bean_process_enumerate_callback callback, void* lpParam);
 MagicBeanProcess* magic_bean_process_open_by_id(MagicBean* magic, uint32_t id);
