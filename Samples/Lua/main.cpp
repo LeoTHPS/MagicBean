@@ -39,6 +39,21 @@ bool                                        _magic_bean_thread_enumerate(MagicBe
 
 	return magic_bean_thread_enumerate(process, _callback, &callback);
 }
+AL::Collections::Tuple<bool, uint32_t>      _magic_bean_thread_get_exit_code(MagicBeanThread* thread)
+{
+	AL::Collections::Tuple<bool, uint32_t> result;
+	result.Set<0>(magic_bean_thread_get_exit_code(thread, &result.Get<1>()));
+
+	return result;
+}
+AL::Collections::Tuple<bool, uint32_t>      _magic_bean_thread_wait_for_exit(MagicBeanThread* thread)
+{
+	AL::Collections::Tuple<bool, uint32_t> result;
+	result.Set<0>(magic_bean_thread_wait_for_exit(thread, &result.Get<1>()));
+
+	return result;
+}
+
 bool                                        _magic_bean_window_enumerate(MagicBeanProcess* process, _magic_bean_process_enumerate_callback_lua callback)
 {
 	magic_bean_window_enumerate_callback _callback = [](const MagicBeanWindowInformation* _lpInformation, void* _lpParam)
@@ -51,6 +66,7 @@ bool                                        _magic_bean_window_enumerate(MagicBe
 
 	return magic_bean_window_enumerate(process, _callback, &callback);
 }
+
 bool                                        _magic_bean_process_enumerate(MagicBean* magic, _magic_bean_process_enumerate_callback_lua callback)
 {
 	magic_bean_process_enumerate_callback _callback = [](const MagicBeanProcessInformation* _lpInformation, void* _lpParam)
@@ -191,8 +207,8 @@ void lua_init(AL::Lua543::State& lua)
 	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_resume);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_suspend);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_terminate);
-	// lua_init_RegisterGlobalFunction(lua, magic_bean_thread_get_exit_code);
-	// lua_init_RegisterGlobalFunction(lua, magic_bean_thread_wait_for_exit);
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_thread_get_exit_code, "magic_bean_thread_get_exit_code");
+	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_thread_wait_for_exit, "magic_bean_thread_wait_for_exit");
 
 	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_window_enumerate, "magic_bean_window_enumerate");
 	lua_init_RegisterGlobalFunction(lua, magic_bean_window_open_by_name);
