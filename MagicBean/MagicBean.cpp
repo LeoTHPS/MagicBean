@@ -314,9 +314,42 @@ bool              magic_bean_thread_wait_for_exit(MagicBeanThread* thread, uint3
 	return true;
 }
 
-bool              magic_bean_window_enumerate(MagicBeanProcess* process, magic_bean_window_enumerate_callback callback, void* lpParam);
-MagicBeanWindow*  magic_bean_window_open_by_name(MagicBeanProcess* process, const char* name);
-MagicBeanWindow*  magic_bean_window_open_by_index(MagicBeanProcess* process, size_t index);
+bool              magic_bean_window_enumerate(MagicBeanProcess* process, magic_bean_window_enumerate_callback callback, void* lpParam)
+{
+	if (process == nullptr)
+	{
+
+		return false;
+	}
+
+	// TODO: implement
+
+	return false;
+}
+MagicBeanWindow*  magic_bean_window_open_by_name(MagicBeanProcess* process, const char* name)
+{
+	if (process == nullptr)
+	{
+
+		return nullptr;
+	}
+
+	// TODO: implement
+
+	return nullptr;
+}
+MagicBeanWindow*  magic_bean_window_open_by_index(MagicBeanProcess* process, size_t index)
+{
+	if (process == nullptr)
+	{
+
+		return nullptr;
+	}
+
+	// TODO: implement
+
+	return nullptr;
+}
 void              magic_bean_window_close(MagicBeanWindow* window)
 {
 	if (window != nullptr)
@@ -396,7 +429,18 @@ bool              magic_bean_window_set_name(MagicBeanWindow* window, const char
 	return true;
 }
 
-bool              magic_bean_process_enumerate(MagicBean* magic, magic_bean_process_enumerate_callback callback, void* lpParam);
+bool              magic_bean_process_enumerate(MagicBean* magic, magic_bean_process_enumerate_callback callback, void* lpParam)
+{
+	if (magic == nullptr)
+	{
+
+		return false;
+	}
+
+	// TODO: implement
+
+	return false;
+}
 MagicBeanProcess* magic_bean_process_open_by_id(MagicBean* magic, uint32_t id)
 {
 	if (magic == nullptr)
@@ -728,8 +772,28 @@ bool              magic_bean_process_memory_write_string(MagicBeanProcess* proce
 {
 	return magic_bean_process_memory_write(process, address, value, AL::String::GetLength(value) + 1);
 }
-uint64_t          magic_bean_process_memory_find(MagicBeanProcess* process, const char* mask, const uint8_t* pattern);
-uint64_t          magic_bean_process_memory_find_at(MagicBeanProcess* process, const char* mask, const uint8_t* pattern, uint64_t address, uint64_t size);
+uint64_t          magic_bean_process_memory_find(MagicBeanProcess* process, const char* mask, const uint8_t* pattern)
+{
+	return magic_bean_process_memory_find_at(process, mask, pattern, AL::Integer<AL::OS::ProcessMemoryAddress>::Minimum, AL::Integer<AL::OS::ProcessMemoryAddress>::Maximum);
+}
+uint64_t          magic_bean_process_memory_find_at(MagicBeanProcess* process, const char* mask, const uint8_t* pattern, uint64_t address, uint64_t size)
+{
+	if (process == nullptr)
+	{
+
+		return 0;
+	}
+
+	if ((mask == nullptr) || (pattern == nullptr))
+	{
+
+		return 0;
+	}
+
+	// TODO: implement
+
+	return 0;
+}
 uint64_t          magic_bean_process_memory_allocate(MagicBeanProcess* process, uint64_t size, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPES type)
 {
 	return magic_bean_process_memory_allocate_at(process, 0, size, type);
@@ -865,8 +929,30 @@ MagicBeanLibrary* magic_bean_process_library_load_file(MagicBeanProcess* process
 
 	return library;
 }
-MagicBeanLibrary* magic_bean_process_library_load_buffer(MagicBeanProcess* process, const void* lpBuffer, uint64_t size);
-MagicBeanLibrary* magic_bean_process_library_load_memory(MagicBeanProcess* process, uint64_t address, uint64_t size);
+MagicBeanLibrary* magic_bean_process_library_load_buffer(MagicBeanProcess* process, const void* lpBuffer, uint64_t size)
+{
+	if (process == nullptr)
+	{
+
+		return nullptr;
+	}
+
+	// TODO: implement
+
+	return nullptr;
+}
+MagicBeanLibrary* magic_bean_process_library_load_memory(MagicBeanProcess* process, uint64_t address, uint64_t size)
+{
+	if (process == nullptr)
+	{
+
+		return nullptr;
+	}
+
+	// TODO: implement
+
+	return nullptr;
+}
 void              magic_bean_process_library_unload(MagicBeanLibrary* library)
 {
 	if (library != nullptr)
