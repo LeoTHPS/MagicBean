@@ -1,0 +1,498 @@
+#include "MagicBean.h"
+
+#include <AL/Common.hpp>
+
+#include <AL/OS/Thread.hpp>
+#include <AL/OS/System.hpp>
+#include <AL/OS/Process.hpp>
+
+#include <AL/Collections/LinkedList.hpp>
+
+struct _MagicBean
+{
+	AL::Collections::LinkedList<MagicBeanProcess*> Processes;
+};
+
+struct _MagicBeanThread
+{
+#if defined(AL_PLATFORM_LINUX)
+
+#elif defined(AL_PLATFORM_WINDOWS)
+	HANDLE            hThread;
+#endif
+	MagicBeanProcess* lpProcess;
+};
+
+struct _MagicBeanLibrary
+{
+	AL::OS::ProcessLibrary Base;
+	MagicBeanProcess*      lpProcess;
+};
+
+struct _MagicBeanWindow
+{
+	MagicBeanProcess* lpProcess;
+};
+
+struct _MagicBeanProcess
+{
+	AL::OS::Process                                Base;
+	MagicBean*                                     lpMagic;
+	AL::Collections::LinkedList<MagicBeanThread*>  Threads;
+	AL::Collections::LinkedList<MagicBeanWindow*>  Windows;
+	AL::Collections::LinkedList<MagicBeanLibrary*> Libraries;
+};
+
+MagicBean*        magic_bean_open()
+{
+	auto magic = new MagicBean
+	{
+	};
+
+	return magic;
+}
+void              magic_bean_close(MagicBean* magic)
+{
+	if (magic != nullptr)
+	{
+		for (auto it = magic->Processes.begin(); it != magic->Processes.end(); )
+			magic_bean_process_close(*(it++));
+
+		delete magic;
+	}
+}
+
+bool              magic_bean_thread_enumerate(MagicBeanProcess* process, magic_bean_thread_enumerate_callback callback, void* lpParam)
+{
+	if (process == nullptr)
+	{
+
+		return false;
+	}
+
+#if defined(AL_PLATFORM_LINUX)
+	// TODO: implement
+	return false;
+#elif defined(AL_PLATFORM_WINDOWS)
+	HANDLE hSnapshot;
+	
+	if ((hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, static_cast<DWORD>(process->Base.GetId()))) == INVALID_HANDLE_VALUE)
+	{
+
+		return false;
+	}
+
+	THREADENTRY32 entry;
+	entry.dwSize = sizeof(THREADENTRY32);
+
+	if (Thread32First(hSnapshot, &entry))
+	{
+		MagicBeanThreadInformation information;
+
+		do
+		{
+			information.ID = entry.th32ThreadID;
+
+			if (!callback(&information, lpParam))
+			{
+
+				break;
+			}
+		} while (Thread32Next(hSnapshot, &entry));
+	}
+
+	CloseHandle(hSnapshot);
+#endif
+
+	return true;
+}
+MagicBeanThread*  magic_bean_thread_create(MagicBeanProcess* process, uint64_t address, uint64_t lpParam);
+MagicBeanThread*  magic_bean_thread_open_by_id(MagicBeanProcess* process, uint32_t id)
+{
+	if (process == nullptr)
+	{
+
+		return nullptr;
+	}
+
+	auto thread = new MagicBeanThread
+	{
+		.lpProcess = process
+	};
+
+#if defined(AL_PLATFORM_LINUX)
+	// TODO: implement
+	return nullptr;
+#elif defined(AL_PLATFORM_WINDOWS)
+	if ((thread->hThread = OpenThread(THREAD_ALL_ACCESS, FALSE, static_cast<DWORD>(id))) == NULL)
+	{
+		delete thread;
+
+		return nullptr;
+	}
+#endif
+
+	return thread;
+}
+void              magic_bean_thread_close(MagicBeanThread* thread)
+{
+	if (thread != nullptr)
+	{
+		thread->lpProcess->Threads.Remove(
+			thread
+		);
+
+#if defined(AL_PLATFORM_LINUX)
+		// TODO: implement
+#elif defined(AL_PLATFORM_WINDOWS)
+		CloseHandle(thread->hThread);
+#endif
+
+		delete thread;
+	}
+}
+bool              magic_bean_thread_resume(MagicBeanThread* thread)
+{
+	if (thread == nullptr)
+	{
+
+		return false;
+	}
+
+#if defined(AL_PLATFORM_LINUX)
+	// TODO: implement
+	return false;
+#elif defined(AL_PLATFORM_WINDOWS)
+	if (ResumeThread(thread->hThread) == DWORD(-1))
+	{
+
+		return false;
+	}
+#endif
+
+	return true;
+}
+bool              magic_bean_thread_suspend(MagicBeanThread* thread)
+{
+	if (thread == nullptr)
+	{
+
+		return false;
+	}
+
+#if defined(AL_PLATFORM_LINUX)
+	// TODO: implement
+	return false;
+#elif defined(AL_PLATFORM_WINDOWS)
+	if (SuspendThread(thread->hThread) == DWORD(-1))
+	{
+
+		return false;
+	}
+#endif
+
+	return true;
+}
+bool              magic_bean_thread_terminate(MagicBeanThread* thread, uint32_t exitCode)
+{
+	if (thread == nullptr)
+	{
+
+		return false;
+	}
+
+#if defined(AL_PLATFORM_LINUX)
+	// TODO: implement
+	return false;
+#elif defined(AL_PLATFORM_WINDOWS)
+	if (TerminateThread(thread->hThread, static_cast<DWORD>(exitCode)) == 0)
+	{
+
+		return false;
+	}
+#endif
+
+	return true;
+}
+bool              magic_bean_thread_get_exit_code(MagicBeanThread* thread, uint32_t* lpValue)
+{
+	if (thread == nullptr)
+	{
+
+		return false;
+	}
+
+#if defined(AL_PLATFORM_LINUX)
+	// TODO: implement
+	return false;
+#elif defined(AL_PLATFORM_WINDOWS)
+	DWORD exitCode;
+
+	if (!GetExitCodeThread(thread->hThread, &exitCode))
+	{
+
+		return false;
+	}
+
+	*lpValue = exitCode;
+#endif
+
+	return true;
+}
+bool              magic_bean_thread_wait_for_exit(MagicBeanThread* thread, uint32_t* lpExitCode)
+{
+	if (thread == nullptr)
+	{
+
+		return false;
+	}
+
+#if defined(AL_PLATFORM_LINUX)
+	// TODO: implement
+	return false;
+#elif defined(AL_PLATFORM_WINDOWS)
+	if (WaitForSingleObject(thread->hThread, INFINITE) != WAIT_OBJECT_0)
+	{
+
+		return false;
+	}
+#endif
+
+	if ((lpExitCode != nullptr) && !magic_bean_thread_get_exit_code(thread, lpExitCode))
+	{
+
+		return false;
+	}
+
+	return true;
+}
+
+bool              magic_bean_window_enumerate(MagicBeanProcess* process, magic_bean_window_enumerate_callback callback, void* lpParam);
+MagicBeanWindow*  magic_bean_window_open_by_name(MagicBeanProcess* process, const char* name);
+MagicBeanWindow*  magic_bean_window_open_by_index(MagicBeanProcess* process, size_t index);
+void              magic_bean_window_close(MagicBeanWindow* window)
+{
+	if (window != nullptr)
+	{
+		window->lpProcess->Windows.Remove(
+			window
+		);
+
+		delete window;
+	}
+}
+
+bool              magic_bean_process_enumerate(MagicBean* magic, magic_bean_process_enumerate_callback callback, void* lpParam);
+MagicBeanProcess* magic_bean_process_open_by_id(MagicBean* magic, uint32_t id);
+MagicBeanProcess* magic_bean_process_open_by_name(MagicBean* magic, const char* name);
+void              magic_bean_process_close(MagicBeanProcess* process)
+{
+	if (process != nullptr)
+	{
+		for (auto it = process->Threads.begin(); it != process->Threads.end(); )
+			magic_bean_thread_close(*(it++));
+
+		for (auto it = process->Windows.begin(); it != process->Windows.end(); )
+			magic_bean_window_close(*(it++));
+
+		for (auto it = process->Libraries.begin(); it != process->Libraries.end(); )
+			magic_bean_process_library_close(*(it++));
+
+		process->lpMagic->Processes.Remove(
+			process
+		);
+
+		delete process;
+	}
+}
+bool              magic_bean_process_resume(MagicBeanProcess* process)
+{
+	magic_bean_thread_enumerate_callback callback = [](const MagicBeanThreadInformation* _lpInformation, void* _lpParam)
+	{
+		auto process = reinterpret_cast<MagicBeanProcess*>(
+			_lpParam
+		);
+
+		if (auto thread = magic_bean_thread_open_by_id(process, _lpInformation->ID))
+		{
+			magic_bean_thread_resume(thread);
+			magic_bean_thread_close(thread);
+		}
+
+		return true;
+	};
+
+	return magic_bean_thread_enumerate(process, callback, process);
+}
+bool              magic_bean_process_suspend(MagicBeanProcess* process)
+{
+	magic_bean_thread_enumerate_callback callback = [](const MagicBeanThreadInformation* _lpInformation, void* _lpParam)
+	{
+		auto process = reinterpret_cast<MagicBeanProcess*>(
+			_lpParam
+		);
+
+		if (auto thread = magic_bean_thread_open_by_id(process, _lpInformation->ID))
+		{
+			magic_bean_thread_suspend(thread);
+			magic_bean_thread_close(thread);
+		}
+
+		return true;
+	};
+
+	return magic_bean_thread_enumerate(process, callback, process);
+}
+bool              magic_bean_process_set_debugger_present(MagicBeanProcess* process, bool set)
+{
+	if (process == nullptr)
+	{
+
+		return false;
+	}
+
+	if (process->Base.IsCurrentProcess())
+	{
+#if defined(AL_PLATFORM_LINUX)
+		// TODO: implement
+		return false;
+#elif defined(AL_PLATFORM_WINDOWS)
+		AL::OS::SetDebuggerPresent(
+			set
+		);
+
+		return true;
+#endif
+	}
+
+#if defined(AL_X86)
+	// TODO: implement
+#elif defined(AL_X86_64)
+	// TODO: implement
+#endif
+
+	return false;
+}
+bool              magic_bean_process_memory_read(MagicBeanProcess* process, uint64_t address, void* lpBuffer, uint64_t size);
+bool              magic_bean_process_memory_write(MagicBeanProcess* process, uint64_t address, const void* lpBuffer, uint64_t size);
+uint64_t          magic_bean_process_memory_find(MagicBeanProcess* process, const char* mask, const uint8_t* pattern);
+uint64_t          magic_bean_process_memory_find_at(MagicBeanProcess* process, const char* mask, const uint8_t* pattern, uint64_t address, uint64_t size);
+uint64_t          magic_bean_process_memory_allocate(MagicBeanProcess* process, uint64_t size);
+uint64_t          magic_bean_process_memory_allocate_at(MagicBeanProcess* process, uint64_t address, uint64_t size);
+bool              magic_bean_process_memory_release(MagicBeanProcess* process, uint64_t address);
+MagicBeanLibrary* magic_bean_process_library_open(MagicBeanProcess* process, const char* name)
+{
+	if (process == nullptr)
+	{
+
+		return nullptr;
+	}
+
+	auto library = new MagicBeanLibrary
+	{
+		.lpProcess = process
+	};
+
+	try
+	{
+		if (!AL::OS::ProcessLibrary::Open(library->Base, process->Base, name))
+		{
+			delete library;
+
+			return nullptr;
+		}
+	}
+	catch (const AL::Exception& exception)
+	{
+		delete library;
+
+		return nullptr;
+	}
+
+	return library;
+}
+void              magic_bean_process_library_close(MagicBeanLibrary* library)
+{
+	if (library != nullptr)
+	{
+		library->lpProcess->Libraries.Remove(
+			library
+		);
+
+		delete library;
+	}
+}
+MagicBeanLibrary* magic_bean_process_library_load_file(MagicBeanProcess* process, const char* path)
+{
+	if (process == nullptr)
+	{
+
+		return nullptr;
+	}
+
+	auto library = new MagicBeanLibrary
+	{
+		.lpProcess = process
+	};
+
+	try
+	{
+		if (!AL::OS::ProcessLibrary::Load(library->Base, process->Base, AL::FileSystem::Path(path)))
+		{
+			delete library;
+
+			return nullptr;
+		}
+	}
+	catch (const AL::Exception& exception)
+	{
+		delete library;
+
+		return nullptr;
+	}
+
+	return library;
+}
+MagicBeanLibrary* magic_bean_process_library_load_buffer(MagicBeanProcess* process, const void* lpBuffer, uint64_t size);
+MagicBeanLibrary* magic_bean_process_library_load_memory(MagicBeanProcess* process, uint64_t address, uint64_t size);
+void              magic_bean_process_library_unload(MagicBeanLibrary* library)
+{
+	if (library != nullptr)
+	{
+		library->Base.Unload();
+	}
+}
+uint64_t          magic_bean_process_library_get_export(MagicBeanLibrary* library, const char* name)
+{
+	if (library == nullptr)
+	{
+
+		return 0;
+	}
+
+	if (name == nullptr)
+	{
+
+		return 0;
+	}
+
+	uint8_t* value;
+
+	try
+	{
+		if (!library->Base.GetExport(value, name))
+		{
+
+			return 0;
+		}
+	}
+	catch (const AL::Exception& exception)
+	{
+
+		return 0;
+	}
+
+	return reinterpret_cast<uint64_t>(
+		value
+	);
+}
