@@ -1,11 +1,11 @@
 package MagicBean;
 
 public class JNI {
-	public class ThreadExitCode {
+	public static class ThreadExitCode {
 		public int value;
 	}
 
-	public class ThreadInformation {
+	public static class ThreadInformation {
 		public int id;
 
 		public ThreadInformation(int id) {
@@ -17,7 +17,7 @@ public class JNI {
 		boolean callback(ThreadInformation information);
 	}
 
-	public class WindowInformation {
+	public static class WindowInformation {
 		public String name;
 		public int    index;
 
@@ -31,7 +31,7 @@ public class JNI {
 		boolean callback(WindowInformation information);
 	}
 
-	public class ProcessInformation {
+	public static class ProcessInformation {
 		public int    id;
 		public String name;
 
@@ -45,7 +45,7 @@ public class JNI {
 		boolean callback(ProcessInformation information);
 	}
 
-	public class ProcessFileVersion {
+	public static class ProcessFileVersion {
 		public long value;
 	}
 
