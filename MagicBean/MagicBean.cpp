@@ -655,7 +655,7 @@ bool              magic_bean_process_get_file_version(MagicBeanProcess* process,
 		return false;
 	}
 
-	*lpValue = static_cast<uint64_t>(lpFixedFileInfo->dwFileVersionMS << 32) | static_cast<uint64_t>(lpFixedFileInfo->dwFileVersionLS);
+	*lpValue = (static_cast<uint64_t>(lpFixedFileInfo->dwFileVersionMS) << 32) | static_cast<uint64_t>(lpFixedFileInfo->dwFileVersionLS);
 #endif
 
 	return true;
