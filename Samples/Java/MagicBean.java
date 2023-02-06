@@ -58,6 +58,8 @@ public class MagicBean {
 	public static native int     magic_bean_get_current_thread_id();
 	public static native int     magic_bean_get_current_process_id();
 
+	public static native boolean magic_bean_thread_is_running(long thread);
+	public static native boolean magic_bean_thread_is_running_by_id(long process, int id);
 	public static native boolean magic_bean_thread_enumerate(long process, ThreadEnumerateCallback callback);
 	public static native long    magic_bean_thread_create(long process, long address, long lpParam);
 	public static native long    magic_bean_thread_open_by_id(long process, int id);
@@ -75,12 +77,15 @@ public class MagicBean {
 	public static native String  magic_bean_window_get_name(long window);
 	public static native boolean magic_bean_window_set_name(long window, String value);
 
+	public static native boolean magic_bean_process_is_running(long process);
+	public static native boolean magic_bean_process_is_running_by_id(long magic, int id);
 	public static native boolean magic_bean_process_enumerate(long magic, ProcessEnumerateCallback callback);
 	public static native long    magic_bean_process_open_by_id(long magic, int id);
 	public static native long    magic_bean_process_open_by_name(long magic, String name);
 	public static native void    magic_bean_process_close(long process);
 	public static native boolean magic_bean_process_resume(long process);
 	public static native boolean magic_bean_process_suspend(long process);
+	public static native boolean magic_bean_process_is_debugger_present(long process);
 	public static native boolean magic_bean_process_set_debugger_present(long process, boolean set);
 	public static native boolean magic_bean_process_memory_read(long process, long address, byte[] buffer, int offset, int size);
 	public static native byte    magic_bean_process_memory_read_int8(long process, long address) throws Exception;

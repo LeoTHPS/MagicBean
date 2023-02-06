@@ -200,6 +200,8 @@ void lua_init(AL::Lua543::State& lua)
 	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_is_not_null, "magic_bean_is_not_null");
 	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_to_number, "magic_bean_to_number");
 
+	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_is_running);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_is_running_by_id);
 	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_thread_enumerate, "magic_bean_thread_enumerate");
 	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_create);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_thread_open_by_id);
@@ -217,12 +219,15 @@ void lua_init(AL::Lua543::State& lua)
 	lua_init_RegisterGlobalFunction(lua, magic_bean_window_get_name);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_window_set_name);
 
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_is_running);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_is_running_by_id);
 	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_enumerate, "magic_bean_process_enumerate");
 	lua_init_RegisterGlobalFunction(lua, magic_bean_process_open_by_id);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_process_open_by_name);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_process_close);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_process_resume);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_process_suspend);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_is_debugger_present);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_process_set_debugger_present);
 	// lua_init_RegisterGlobalFunction(lua, magic_bean_process_memory_read);
 	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_memory_read_int8,   "magic_bean_process_memory_read_int8");

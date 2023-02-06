@@ -41,6 +41,14 @@ extern "C" JNIEXPORT jint JNICALL     Java_MagicBean_magic_bean_get_current_proc
 	);
 }
 
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_thread_is_running(JNIEnv* jni, jclass clazz, jlong thread)
+{
+	return magic_bean_thread_is_running(reinterpret_cast<MagicBeanThread*>(thread));
+}
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_thread_is_running_by_id(JNIEnv* jni, jclass clazz, jlong process, jint id)
+{
+	return magic_bean_thread_is_running_by_id(reinterpret_cast<MagicBeanProcess*>(process), static_cast<uint32_t>(id));
+}
 extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_thread_enumerate(JNIEnv* jni, jclass clazz, jlong process, jobject callback)
 {
 	struct Context
@@ -242,6 +250,14 @@ extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_window_set_name(
 	return _value;
 }
 
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_is_running(JNIEnv* jni, jclass clazz, jlong process)
+{
+	return magic_bean_process_is_running(reinterpret_cast<MagicBeanProcess*>(process));
+}
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_is_running_by_id(JNIEnv* jni, jclass clazz, jlong magic, jint id)
+{
+	return magic_bean_process_is_running_by_id(reinterpret_cast<MagicBean*>(magic), static_cast<uint32_t>(id));
+}
 extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_enumerate(JNIEnv* jni, jclass clazz, jlong magic, jobject callback)
 {
 	struct Context
@@ -318,6 +334,10 @@ extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_resume(J
 extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_suspend(JNIEnv* jni, jclass clazz, jlong process)
 {
 	return magic_bean_process_suspend(reinterpret_cast<MagicBeanProcess*>(process));
+}
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_is_debugger_present(JNIEnv* jni, jclass clazz, jlong process)
+{
+	return magic_bean_process_is_debugger_present(reinterpret_cast<MagicBeanProcess*>(process));
 }
 extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_magic_bean_process_set_debugger_present(JNIEnv* jni, jclass clazz, jlong process, jboolean set)
 {

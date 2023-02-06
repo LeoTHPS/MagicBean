@@ -114,6 +114,47 @@ uint64_t          magic_bean_get_timestamp(MagicBean* magic)
 	return AL::OS::System::GetTimestamp().ToSeconds();
 }
 
+bool              magic_bean_thread_is_running(MagicBeanThread* thread)
+{
+	if (thread == nullptr)
+	{
+
+		return false;
+	}
+
+#if defined(AL_PLATFORM_LINUX)
+	// TODO: implement
+	return false;
+#elif defined(AL_PLATFORM_WINDOWS)
+	if (WaitForSingleObject(thread->hThread, 0) == WAIT_OBJECT_0)
+	{
+
+		return false;
+	}
+#endif
+
+	return true;
+}
+bool              magic_bean_thread_is_running_by_id(MagicBeanProcess* process, uint32_t id)
+{
+	MagicBeanThread* thread;
+
+	if ((thread = magic_bean_thread_open_by_id(process, id)) == nullptr)
+	{
+
+		return false;
+	}
+
+	auto result = magic_bean_thread_is_running(
+		thread
+	);
+
+	magic_bean_thread_close(
+		thread
+	);
+
+	return result;
+}
 bool              magic_bean_thread_enumerate(MagicBeanProcess* process, magic_bean_thread_enumerate_callback callback, void* lpParam)
 {
 	if (process == nullptr)
@@ -481,6 +522,67 @@ bool              magic_bean_window_set_name(MagicBeanWindow* window, const char
 	return true;
 }
 
+bool              magic_bean_process_is_running(MagicBeanProcess* process)
+{
+	struct Context
+	{
+		MagicBeanProcess* Process;
+		bool              IsAnyThreadRunning;
+	};
+
+	Context context =
+	{
+		.Process            = process,
+		.IsAnyThreadRunning = false
+	};
+
+	magic_bean_thread_enumerate_callback callback = [](const MagicBeanThreadInformation* _lpInformation, void* _lpParam)
+	{
+		auto lpContext = reinterpret_cast<Context*>(
+			_lpParam
+		);
+
+		if (magic_bean_thread_is_running_by_id(lpContext->Process, _lpInformation->ID))
+		{
+			lpContext->IsAnyThreadRunning = true;
+
+			return false;
+		}
+
+		return true;
+	};
+
+	if (!magic_bean_thread_enumerate(context.Process, callback, &context))
+	{
+		magic_bean_process_close(
+			context.Process
+		);
+
+		return false;
+	}
+
+	return context.IsAnyThreadRunning;
+}
+bool              magic_bean_process_is_running_by_id(MagicBean* magic, uint32_t id)
+{
+	MagicBeanProcess* process;
+
+	if ((process = magic_bean_process_open_by_id(magic, id)) == nullptr)
+	{
+
+		return false;
+	}
+
+	auto result = magic_bean_process_is_running(
+		process
+	);
+
+	magic_bean_process_close(
+		process
+	);
+
+	return result;
+}
 bool              magic_bean_process_enumerate(MagicBean* magic, magic_bean_process_enumerate_callback callback, void* lpParam)
 {
 	if (magic == nullptr)
@@ -683,6 +785,32 @@ bool              magic_bean_process_suspend(MagicBeanProcess* process)
 	};
 
 	return magic_bean_thread_enumerate(process, callback, process);
+}
+bool              magic_bean_process_is_debugger_present(MagicBeanProcess* process)
+{
+	if (process == nullptr)
+	{
+
+		return false;
+	}
+
+	if (process->Base.IsCurrentProcess())
+	{
+#if defined(AL_PLATFORM_LINUX)
+		// TODO: implement
+		return false;
+#elif defined(AL_PLATFORM_WINDOWS)
+		return AL::OS::IsDebuggerPresent();
+#endif
+	}
+
+#if defined(AL_X86)
+	// TODO: implement
+#elif defined(AL_X86_64)
+	// TODO: implement
+#endif
+
+	return false;
 }
 bool              magic_bean_process_set_debugger_present(MagicBeanProcess* process, bool set)
 {

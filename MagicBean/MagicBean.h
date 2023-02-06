@@ -72,6 +72,8 @@ MAGIC_BEAN_EXPORT uint64_t          magic_bean_get_timestamp(MagicBean* magic);
 MAGIC_BEAN_EXPORT uint32_t          magic_bean_get_current_thread_id();
 MAGIC_BEAN_EXPORT uint32_t          magic_bean_get_current_process_id();
 
+MAGIC_BEAN_EXPORT bool              magic_bean_thread_is_running(MagicBeanThread* thread);
+MAGIC_BEAN_EXPORT bool              magic_bean_thread_is_running_by_id(MagicBeanProcess* process, uint32_t id);
 MAGIC_BEAN_EXPORT bool              magic_bean_thread_enumerate(MagicBeanProcess* process, magic_bean_thread_enumerate_callback callback, void* lpParam);
 MAGIC_BEAN_EXPORT MagicBeanThread*  magic_bean_thread_create(MagicBeanProcess* process, uint64_t address, uint64_t lpParam);
 MAGIC_BEAN_EXPORT MagicBeanThread*  magic_bean_thread_open_by_id(MagicBeanProcess* process, uint32_t id);
@@ -89,12 +91,15 @@ MAGIC_BEAN_EXPORT void              magic_bean_window_close(MagicBeanWindow* win
 MAGIC_BEAN_EXPORT const char*       magic_bean_window_get_name(MagicBeanWindow* window);
 MAGIC_BEAN_EXPORT bool              magic_bean_window_set_name(MagicBeanWindow* window, const char* value);
 
+MAGIC_BEAN_EXPORT bool              magic_bean_process_is_running(MagicBeanProcess* process);
+MAGIC_BEAN_EXPORT bool              magic_bean_process_is_running_by_id(MagicBean* magic, uint32_t id);
 MAGIC_BEAN_EXPORT bool              magic_bean_process_enumerate(MagicBean* magic, magic_bean_process_enumerate_callback callback, void* lpParam);
 MAGIC_BEAN_EXPORT MagicBeanProcess* magic_bean_process_open_by_id(MagicBean* magic, uint32_t id);
 MAGIC_BEAN_EXPORT MagicBeanProcess* magic_bean_process_open_by_name(MagicBean* magic, const char* name);
 MAGIC_BEAN_EXPORT void              magic_bean_process_close(MagicBeanProcess* process);
 MAGIC_BEAN_EXPORT bool              magic_bean_process_resume(MagicBeanProcess* process);
 MAGIC_BEAN_EXPORT bool              magic_bean_process_suspend(MagicBeanProcess* process);
+MAGIC_BEAN_EXPORT bool              magic_bean_process_is_debugger_present(MagicBeanProcess* process);
 MAGIC_BEAN_EXPORT bool              magic_bean_process_set_debugger_present(MagicBeanProcess* process, bool value);
 MAGIC_BEAN_EXPORT bool              magic_bean_process_memory_read(MagicBeanProcess* process, uint64_t address, void* lpBuffer, uint64_t size);
 MAGIC_BEAN_EXPORT bool              magic_bean_process_memory_read_int8(MagicBeanProcess* process, uint64_t address, int8_t* lpValue);
