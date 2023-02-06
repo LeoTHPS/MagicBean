@@ -6,3 +6,4 @@
 *.so
 *.dll
 *.exe
+*.lib
