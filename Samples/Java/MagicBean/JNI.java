@@ -1,4 +1,6 @@
-public class MagicBean {
+package MagicBean;
+
+public class JNI {
 	public class ThreadExitCode {
 		public int value;
 	}

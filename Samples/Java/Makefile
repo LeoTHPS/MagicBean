@@ -1,7 +1,7 @@
 RM           ?= rm -f
 CXX          ?= g++
 
-SOURCE_FILES = Java_MagicBean.cpp
+SOURCE_FILES = Java_MagicBean_JNI.cpp
 OBJECT_FILES = $(SOURCE_FILES:.cpp=.o)
 
 LDFLAGS      += -shared
