@@ -45,6 +45,10 @@ public class JNI {
 		boolean callback(ProcessInformation information);
 	}
 
+	public class ProcessFileVersion {
+		public long value;
+	}
+
 	public static final byte MEMORY_PROTECTION_TYPE_NONE               = 0;
 	public static final byte MEMORY_PROTECTION_TYPE_READ               = 1;
 	public static final byte MEMORY_PROTECTION_TYPE_READ_WRITE         = 2;
@@ -81,6 +85,8 @@ public class JNI {
 
 	public static native boolean magic_bean_process_is_running(long process);
 	public static native boolean magic_bean_process_is_running_by_id(long magic, int id);
+	public static native boolean magic_bean_process_get_file_version(long process, ProcessFileVersion version);
+	public static native boolean magic_bean_process_get_file_version_by_id(long magic, int id, ProcessFileVersion version);
 	public static native boolean magic_bean_process_enumerate(long magic, ProcessEnumerateCallback callback);
 	public static native long    magic_bean_process_open_by_id(long magic, int id);
 	public static native long    magic_bean_process_open_by_name(long magic, String name);

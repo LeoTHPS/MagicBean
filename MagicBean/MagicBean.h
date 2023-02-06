@@ -93,6 +93,8 @@ MAGIC_BEAN_EXPORT bool              magic_bean_window_set_name(MagicBeanWindow* 
 
 MAGIC_BEAN_EXPORT bool              magic_bean_process_is_running(MagicBeanProcess* process);
 MAGIC_BEAN_EXPORT bool              magic_bean_process_is_running_by_id(MagicBean* magic, uint32_t id);
+MAGIC_BEAN_EXPORT bool              magic_bean_process_get_file_version(MagicBeanProcess* process, uint64_t* lpValue);
+MAGIC_BEAN_EXPORT bool              magic_bean_process_get_file_version_by_id(MagicBean* magic, uint32_t id, uint64_t* lpValue);
 MAGIC_BEAN_EXPORT bool              magic_bean_process_enumerate(MagicBean* magic, magic_bean_process_enumerate_callback callback, void* lpParam);
 MAGIC_BEAN_EXPORT MagicBeanProcess* magic_bean_process_open_by_id(MagicBean* magic, uint32_t id);
 MAGIC_BEAN_EXPORT MagicBeanProcess* magic_bean_process_open_by_name(MagicBean* magic, const char* name);

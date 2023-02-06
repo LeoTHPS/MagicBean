@@ -10,6 +10,12 @@
 #include <AL/Collections/Array.hpp>
 #include <AL/Collections/LinkedList.hpp>
 
+#if defined(AL_PLATFORM_LINUX)
+
+#elif defined(AL_PLATFORM_WINDOWS)
+	#include <psapi.h>
+#endif
+
 struct _MagicBean
 {
 	AL::OS::Timer                                  Timer;
@@ -582,6 +588,102 @@ bool              magic_bean_process_is_running_by_id(MagicBean* magic, uint32_t
 	);
 
 	return result;
+}
+bool              magic_bean_process_get_file_version(MagicBeanProcess* process, uint64_t* lpValue)
+{
+	if (process == nullptr)
+	{
+
+		return false;
+	}
+
+#if defined(AL_PLATFORM_LINUX)
+	// TODO: implement
+	return false;
+#elif defined(AL_PLATFORM_WINDOWS)
+	char path[MAX_PATH + 1] = { 0 };
+
+	if (!GetModuleFileNameExA(process->Base.GetHandle(), nullptr, &path[0], sizeof(path)))
+	{
+
+		return false;
+	}
+
+	DWORD dwHandle;
+	DWORD fileVersionInfoSize;
+
+	if (!(fileVersionInfoSize = GetFileVersionInfoSizeA(&path[0], &dwHandle)))
+	{
+
+		return false;
+	}
+
+	AL::Collections::Array<AL::uint8> fileVersionInfoBuffer(
+		fileVersionInfoSize
+	);
+
+	if (!GetFileVersionInfoA(&path[0], dwHandle, fileVersionInfoSize, &fileVersionInfoBuffer[0]))
+	{
+
+		return false;
+	}
+
+	UINT fixedFileInfoLength;
+	VS_FIXEDFILEINFO* lpFixedFileInfo;
+
+	if (!VerQueryValueA(&fileVersionInfoBuffer[0], "\\", reinterpret_cast<LPVOID*>(&lpFixedFileInfo), &fixedFileInfoLength))
+	{
+
+		return false;
+	}
+
+	else if (!lpFixedFileInfo)
+	{
+
+		return false;
+	}
+
+	else if (fixedFileInfoLength != sizeof(VS_FIXEDFILEINFO))
+	{
+
+		return false;
+	}
+
+	else if (lpFixedFileInfo->dwSignature != 0xFEEF04BD)
+	{
+
+		return false;
+	}
+
+	*lpValue = (lpFixedFileInfo->dwFileVersionMS << 32) | lpFixedFileInfo->dwFileVersionLS;
+#endif
+
+	return true;
+}
+bool              magic_bean_process_get_file_version_by_id(MagicBean* magic, uint32_t id, uint64_t* lpValue)
+{
+	MagicBeanProcess* process;
+
+	if ((process = magic_bean_process_open_by_id(magic, id)) == nullptr)
+	{
+
+		return false;
+	}
+
+	if (!magic_bean_process_get_file_version(process, lpValue))
+	{
+		magic_bean_process_close(
+			process
+		);
+
+		return false;
+	}
+
+	magic_bean_process_close(
+		process
+	);
+
+	return true;
 }
 bool              magic_bean_process_enumerate(MagicBean* magic, magic_bean_process_enumerate_callback callback, void* lpParam)
 {

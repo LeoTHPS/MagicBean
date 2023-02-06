@@ -221,6 +221,8 @@ void lua_init(AL::Lua543::State& lua)
 
 	lua_init_RegisterGlobalFunction(lua, magic_bean_process_is_running);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_process_is_running_by_id);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_get_file_version);
+	lua_init_RegisterGlobalFunction(lua, magic_bean_process_get_file_version_by_id);
 	lua_init_RegisterGlobalFunctionAs(lua, _magic_bean_process_enumerate, "magic_bean_process_enumerate");
 	lua_init_RegisterGlobalFunction(lua, magic_bean_process_open_by_id);
 	lua_init_RegisterGlobalFunction(lua, magic_bean_process_open_by_name);

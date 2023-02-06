@@ -60,7 +60,7 @@ extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_JNI_magic_bean_thread_enume
 
 	context.JNI                           = jni;
 	context.Callback                      = callback;
-	context.C_MagicBean_ThreadInformation = jni->FindClass("MagicBean$ThreadInformation");
+	context.C_MagicBean_ThreadInformation = jni->FindClass("MagicBean/JNI$ThreadInformation");
 
 	magic_bean_thread_enumerate_callback _callback = [](const MagicBeanThreadInformation* _lpInformation, void* _lpParam)->bool
 	{
@@ -80,7 +80,7 @@ extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_JNI_magic_bean_thread_enume
 
 		return lpContext->JNI->CallBooleanMethod(
 			lpContext->Callback,
-			lpContext->JNI->GetMethodID(lpContext->JNI->GetObjectClass(lpContext->Callback), "callback", "(LMagicBean$ThreadInformation;)Z"),
+			lpContext->JNI->GetMethodID(lpContext->JNI->GetObjectClass(lpContext->Callback), "callback", "(LMagicBean/JNI$ThreadInformation;)Z"),
 			threadInformation
 		);
 	};
@@ -159,7 +159,7 @@ extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_JNI_magic_bean_window_enume
 
 	context.JNI                           = jni;
 	context.Callback                      = callback;
-	context.C_MagicBean_WindowInformation = jni->FindClass("MagicBean$WindowInformation");
+	context.C_MagicBean_WindowInformation = jni->FindClass("MagicBean/JNI$WindowInformation");
 
 	magic_bean_window_enumerate_callback _callback = [](const MagicBeanWindowInformation* _lpInformation, void* _lpParam)->bool
 	{
@@ -180,7 +180,7 @@ extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_JNI_magic_bean_window_enume
 
 		return lpContext->JNI->CallBooleanMethod(
 			lpContext->Callback,
-			lpContext->JNI->GetMethodID(lpContext->JNI->GetObjectClass(lpContext->Callback), "callback", "(LMagicBean$WindowInformation;)Z"),
+			lpContext->JNI->GetMethodID(lpContext->JNI->GetObjectClass(lpContext->Callback), "callback", "(LMagicBean/JNI$WindowInformation;)Z"),
 			windowInformation
 		);
 	};
@@ -258,6 +258,42 @@ extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_JNI_magic_bean_process_is_r
 {
 	return magic_bean_process_is_running_by_id(reinterpret_cast<MagicBean*>(magic), static_cast<uint32_t>(id));
 }
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_JNI_magic_bean_process_get_file_version(JNIEnv* jni, jclass clazz, jlong process, jobject version)
+{
+	uint64_t value;
+
+	if (!magic_bean_process_get_file_version(reinterpret_cast<MagicBeanProcess*>(process), &value))
+	{
+
+		return false;
+	}
+
+	jni->SetLongField(
+		version,
+		jni->GetFieldID(jni->GetObjectClass(version), "value", "J"),
+		static_cast<jlong>(value)
+	);
+
+	return true;
+}
+extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_JNI_magic_bean_process_get_file_version_by_id(JNIEnv* jni, jclass clazz, jlong magic, jint id, jobject version)
+{
+	uint64_t value;
+
+	if (!magic_bean_process_get_file_version_by_id(reinterpret_cast<MagicBean*>(magic), static_cast<uint32_t>(id), &value))
+	{
+
+		return false;
+	}
+
+	jni->SetLongField(
+		version,
+		jni->GetFieldID(jni->GetObjectClass(version), "value", "J"),
+		static_cast<jlong>(value)
+	);
+
+	return true;
+}
 extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_JNI_magic_bean_process_enumerate(JNIEnv* jni, jclass clazz, jlong magic, jobject callback)
 {
 	struct Context
@@ -269,7 +305,7 @@ extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_JNI_magic_bean_process_enum
 
 	context.JNI                            = jni;
 	context.Callback                       = callback;
-	context.C_MagicBean_ProcessInformation = jni->FindClass("MagicBean$ProcessInformation");
+	context.C_MagicBean_ProcessInformation = jni->FindClass("MagicBean/JNI$ProcessInformation");
 
 	magic_bean_process_enumerate_callback _callback = [](const MagicBeanProcessInformation* _lpInformation, void* _lpParam)->bool
 	{
@@ -290,7 +326,7 @@ extern "C" JNIEXPORT jboolean JNICALL Java_MagicBean_JNI_magic_bean_process_enum
 
 		return lpContext->JNI->CallBooleanMethod(
 			lpContext->Callback,
-			lpContext->JNI->GetMethodID(lpContext->JNI->GetObjectClass(lpContext->Callback), "callback", "(LMagicBean$ProcessInformation;)Z"),
+			lpContext->JNI->GetMethodID(lpContext->JNI->GetObjectClass(lpContext->Callback), "callback", "(LMagicBean/JNI$ProcessInformation;)Z"),
 			processInformation
 		);
 	};
