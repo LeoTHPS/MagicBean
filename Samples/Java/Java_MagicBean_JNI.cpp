@@ -416,7 +416,7 @@ extern "C" JNIEXPORT jbyte JNICALL    Java_MagicBean_JNI_magic_bean_process_memo
 
 	return value;
 }
-extern "C" JNIEXPORT jbyte JNICALL    Java_MagicBean_JNI_magic_bean_process_memory_read_int16(JNIEnv* jni, jclass clazz, jlong process, jlong address)
+extern "C" JNIEXPORT jshort JNICALL   Java_MagicBean_JNI_magic_bean_process_memory_read_int16(JNIEnv* jni, jclass clazz, jlong process, jlong address)
 {
 	int16_t value;
 
@@ -431,7 +431,7 @@ extern "C" JNIEXPORT jbyte JNICALL    Java_MagicBean_JNI_magic_bean_process_memo
 
 	return value;
 }
-extern "C" JNIEXPORT jbyte JNICALL    Java_MagicBean_JNI_magic_bean_process_memory_read_int32(JNIEnv* jni, jclass clazz, jlong process, jlong address)
+extern "C" JNIEXPORT jint JNICALL     Java_MagicBean_JNI_magic_bean_process_memory_read_int32(JNIEnv* jni, jclass clazz, jlong process, jlong address)
 {
 	int32_t value;
 
@@ -446,7 +446,7 @@ extern "C" JNIEXPORT jbyte JNICALL    Java_MagicBean_JNI_magic_bean_process_memo
 
 	return value;
 }
-extern "C" JNIEXPORT jbyte JNICALL    Java_MagicBean_JNI_magic_bean_process_memory_read_int64(JNIEnv* jni, jclass clazz, jlong process, jlong address)
+extern "C" JNIEXPORT jlong JNICALL    Java_MagicBean_JNI_magic_bean_process_memory_read_int64(JNIEnv* jni, jclass clazz, jlong process, jlong address)
 {
 	int64_t value;
 
