@@ -1,3 +1,10 @@
+# Visual Studio
+*.sln
+*.vcxproj
+*.vcxproj.user
+*.vcxproj.filters
+/.vs/
+
 # Visual Studio Code
 /.vscode/
 
@@ -6,4 +13,10 @@
 *.so
 *.dll
 *.exe
+*.exp
+*.idb
+*.jar
 *.lib
+*.pdb
+*.class
+Debug/
