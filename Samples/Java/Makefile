@@ -20,13 +20,13 @@ endif
 
 ifdef PLATFORM
 	ifeq ($(PLATFORM), LINUX)
-		LDLIBS   += -lpthread
+		LDLIBS   += -ldl -lpthread
 		LDLIBS   += "../../MagicBean/MagicBean.a"
 		CXXFLAGS += -I"$(JAVAC_INCLUDE)/linux/"
 	endif
 
 	ifeq ($(PLATFORM), WINDOWS)
-		LDLIBS   += -luser32
+		LDLIBS   += -luser32 -lntdll -lkernel32 -lShlwapi -lVersion
 		LDLIBS   += "../../MagicBean/MagicBean.lib"
 		CXXFLAGS += -I"$(JAVAC_INCLUDE)/win32/"
 	endif
