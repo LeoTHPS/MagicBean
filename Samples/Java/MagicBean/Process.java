@@ -52,6 +52,13 @@ public class Process implements Closeable {
 		}
 	}
 
+	public boolean isRunning() throws IOException {
+		return JNI.magic_bean_process_is_running(getHandle());
+	}
+	public static boolean isRunning(Magic magic, int processId) throws IOException {
+		return JNI.magic_bean_process_is_running_by_id(magic.getHandle(), processId);
+	}
+
 	public long getFileVersion() throws Exception {
 		JNI.ProcessFileVersion fileVersion = new JNI.ProcessFileVersion();
 
