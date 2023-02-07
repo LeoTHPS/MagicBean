@@ -20,21 +20,26 @@ endif
 ifdef PLATFORM
 	ifeq ($(PLATFORM), LINUX)
 		LDLIBS   += -lpthread
-		LDLIBS   += "../../MagicBean/MagicBean.so"
+		LDLIBS   += "../../MagicBean/MagicBean.a"
 		CXXFLAGS += -I"$(JAVAC_INCLUDE)/linux/"
 	endif
 
 	ifeq ($(PLATFORM), WINDOWS)
 		LDLIBS   += -luser32
-		LDLIBS   += "../../MagicBean/MagicBean.dll"
+		LDLIBS   += "../../MagicBean/MagicBean.lib"
 		CXXFLAGS += -I"$(JAVAC_INCLUDE)/win32/"
 	endif
 endif
 
-.PHONY: clean
+.PHONY: clean MagicBean.jar
 
-MagicBean: $(OBJECT_FILES)
+MagicBean: $(OBJECT_FILES) MagicBean.jar
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
+
+MagicBean.jar:
+	javac MagicBean/*.java
+	jar cf $@ MagicBean/*.class
 
 clean:
 	$(RM) $(OBJECT_FILES)
+	$(RM) MagicBean/*.class
