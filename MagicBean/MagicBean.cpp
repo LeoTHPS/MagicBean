@@ -491,9 +491,21 @@ MagicBeanWindow*  magic_bean_window_open(MagicBeanProcess* process, const MagicB
 		return nullptr;
 	}
 
-	// TODO: implement
+	auto window = new MagicBeanWindow
+	{
+#if defined(AL_PLATFORM_LINUX)
+		// TODO: implement
+#elif defined(AL_PLATFORM_WINDOWS)
+		.hWND      = information.hWND,
+#endif
+		.lpProcess = process
+	};
 
-	return nullptr;
+	process->Windows.PushBack(
+		window
+	);
+
+	return window;
 }
 MagicBeanWindow*  magic_bean_window_open_by_name(MagicBeanProcess* process, const char* name)
 {
