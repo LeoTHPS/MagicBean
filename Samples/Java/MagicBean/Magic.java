@@ -33,7 +33,7 @@ public class Magic implements Closeable {
 	}
 
 	public long getTimeUS() {
-		return JNI.magic_bean_get_time_ms(getHandle());
+		return JNI.magic_bean_get_time_us(getHandle());
 	}
 
 	public long getTimestamp() {
