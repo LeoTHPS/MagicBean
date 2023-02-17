@@ -433,9 +433,51 @@ MagicBeanWindow*  magic_bean_window_open_by_name(MagicBeanProcess* process, cons
 		return nullptr;
 	}
 
-	// TODO: implement
+	struct Context
+	{
+		AL::String Name;
+		size_t     Index;
+		bool       Found;
+	};
 
-	return nullptr;
+	Context context =
+	{
+		.Name  = name,
+		.Found = false
+	};
+
+	magic_bean_window_enumerate_callback callback([](const MagicBeanWindowInformation* _lpInformation, void* _lpParam)
+	{
+		auto lpContext = reinterpret_cast<Context*>(
+			_lpParam
+		);
+
+		if (lpContext->Name.Compare(_lpInformation->Name, AL::False))
+		{
+			lpContext->Index = _lpInformation->Index;
+			lpContext->Found = true;
+
+			return false;
+		}
+
+		return true;
+	});
+
+	if (!magic_bean_window_enumerate(process, callback, &context) || !context.Found)
+	{
+
+		return nullptr;
+	}
+
+	MagicBeanWindow* window;
+
+	if ((window = magic_bean_window_open_by_index(process, context.Index)) == nullptr)
+	{
+
+		return nullptr;
+	}
+
+	return window;
 }
 MagicBeanWindow*  magic_bean_window_open_by_index(MagicBeanProcess* process, size_t index)
 {
