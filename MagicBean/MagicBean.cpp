@@ -436,9 +436,40 @@ bool              magic_bean_window_enumerate(MagicBeanProcess* process, magic_b
 		return false;
 	}
 
-	// TODO: implement
+	struct Context
+	{
+		void*                                lpParam;
+		magic_bean_window_enumerate_callback Callback;
+	};
 
-	return false;
+	Context context =
+	{
+		.lpParam  = lpParam,
+		.Callback = callback
+	};
+
+	magic_bean_window_enumerate_callback_ex _callback([](const MagicBeanWindowInformationEx& _information, void* _lpParam)
+	{
+		auto lpContext = reinterpret_cast<Context*>(
+			_lpParam
+		);
+
+		if (!lpContext->Callback(&_information, lpContext->lpParam))
+		{
+
+			return false;
+		}
+
+		return true;
+	});
+
+	if (!magic_bean_window_enumerate_ex(process, _callback, &context))
+	{
+
+		return false;
+	}
+
+	return true;
 }
 bool              magic_bean_window_enumerate_ex(MagicBeanProcess* process, magic_bean_window_enumerate_callback_ex callback, void* lpParam)
 {
