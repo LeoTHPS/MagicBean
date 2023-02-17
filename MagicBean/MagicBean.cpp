@@ -479,9 +479,62 @@ bool              magic_bean_window_enumerate_ex(MagicBeanProcess* process, magi
 		return false;
 	}
 
-	// TODO: implement
+	MagicBeanWindowInformationEx information;
+	information.Index = 0;
 
+#if defined(AL_PLATFORM_LINUX)
+	// TODO: implement
 	return false;
+#elif defined(AL_PLATFORM_WINDOWS)
+	DWORD processId, currentProcessId = GetCurrentProcessId();
+
+	while ((information.hWND = FindWindowEx(NULL, information.hWND, NULL, NULL)) != NULL)
+	{
+		GetWindowThreadProcessId(
+			information.hWND,
+			&processId
+		);
+
+		if (processId == currentProcessId)
+		{
+			++information.Index;
+
+			int windowTitleLength;
+
+			if ((windowTitleLength = GetWindowTextLengthA(information.hWND)) == 0)
+			{
+				if (GetLastError() != ERROR_SUCCESS)
+				{
+
+					return false;
+				}
+			}
+
+			AL::Collections::Array<AL::String::Char> windowTitleBuffer(
+				static_cast<size_t>(windowTitleLength)
+			);
+
+			if ((windowTitleLength = GetWindowTextA(information.hWND, &windowTitleBuffer[0], windowTitleLength)) == 0)
+			{
+				if (GetLastError() != ERROR_SUCCESS)
+				{
+
+					return false;
+				}
+			}
+
+			information.Name = &windowTitleBuffer[0];
+
+			if (!callback(information, lpParam))
+			{
+
+				break;
+			}
+		}
+	}
+#endif
+
+	return true;
 }
 MagicBeanWindow*  magic_bean_window_open(MagicBeanProcess* process, const MagicBeanWindowInformationEx& information)
 {
