@@ -1133,9 +1133,40 @@ uint64_t          magic_bean_process_memory_find_at(MagicBeanProcess* process, c
 		return 0;
 	}
 
-	// TODO: implement
+	auto maskLength = AL::String::GetLength(
+		mask
+	);
 
-	return 0;
+	AL::OS::ProcessMemoryPattern _pattern(
+		maskLength
+	);
+
+	for (AL::size_t i = 0; i < maskLength; ++i)
+	{
+		_pattern[i] =
+		{
+			.Value    = pattern[i],
+			.Required = mask[i] != '?'
+		};
+	}
+
+	AL::OS::ProcessMemoryAddress _address;
+
+	try
+	{
+		if (!process->Memory.Search(_address, _pattern, static_cast<AL::OS::ProcessMemoryAddress>(address), static_cast<AL::OS::ProcessMemoryAddress>(size)))
+		{
+
+			return 0;
+		}
+	}
+	catch (const AL::Exception& exception)
+	{
+
+		return 0;
+	}
+
+	return _address;
 }
 uint64_t          magic_bean_process_memory_allocate(MagicBeanProcess* process, uint64_t size, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPES type)
 {
