@@ -8,6 +8,10 @@
 extern "C" {
 #endif
 
+#if !defined(ssize_t)
+	#define ssize_t int64_t
+#endif
+
 #if defined(MAGIC_BEAN_API)
 	#if defined(WIN32) || defined(_WIN32)
 		#define MAGIC_BEAN_EXPORT __declspec(dllexport)
