@@ -521,9 +521,46 @@ MagicBeanWindow*  magic_bean_window_open_by_index(MagicBeanProcess* process, siz
 		return nullptr;
 	}
 
-	// TODO: implement
+	struct Context
+	{
+		size_t            Index;
+		MagicBeanWindow*  Window;
+		MagicBeanProcess* Process;
+	};
 
-	return nullptr;
+	Context context =
+	{
+		.Index   = index,
+		.Window  = nullptr,
+		.Process = process
+	};
+
+	magic_bean_window_enumerate_callback_ex callback([](const MagicBeanWindowInformationEx& information, void* _lpParam)
+	{
+		auto lpContext = reinterpret_cast<Context*>(
+			_lpParam
+		);
+
+		if (information.Index == lpContext->Index)
+		{
+			lpContext->Window = magic_bean_window_open(
+				lpContext->Process,
+				information
+			);
+
+			return false;
+		}
+
+		return true;
+	});
+
+	if (!magic_bean_window_enumerate_ex(process, callback, &context))
+	{
+
+		return nullptr;
+	}
+
+	return context.Window;
 }
 void              magic_bean_window_close(MagicBeanWindow* window)
 {
