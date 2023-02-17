@@ -16,6 +16,21 @@
 	#include <psapi.h>
 #endif
 
+struct MagicBeanWindowInformationEx
+	: public MagicBeanWindowInformation
+{
+#if defined(AL_PLATFORM_LINUX)
+
+#elif defined(AL_PLATFORM_WINDOWS)
+	HWND hWND;
+#endif
+};
+
+typedef bool(*magic_bean_window_enumerate_callback_ex)(const MagicBeanWindowInformationEx& information, void* lpParam);
+
+MagicBeanWindow* magic_bean_window_open(MagicBeanProcess* process, const MagicBeanWindowInformationEx& information);
+bool             magic_bean_window_enumerate_ex(MagicBeanProcess* process, magic_bean_window_enumerate_callback_ex callback, void* lpParam);
+
 struct _MagicBean
 {
 	AL::OS::Timer                                  Timer;
@@ -425,6 +440,30 @@ bool              magic_bean_window_enumerate(MagicBeanProcess* process, magic_b
 
 	return false;
 }
+bool              magic_bean_window_enumerate_ex(MagicBeanProcess* process, magic_bean_window_enumerate_callback_ex callback, void* lpParam)
+{
+	if (process == nullptr)
+	{
+
+		return false;
+	}
+
+	// TODO: implement
+
+	return false;
+}
+MagicBeanWindow*  magic_bean_window_open(MagicBeanProcess* process, const MagicBeanWindowInformationEx& information)
+{
+	if (process == nullptr)
+	{
+
+		return nullptr;
+	}
+
+	// TODO: implement
+
+	return nullptr;
+}
 MagicBeanWindow*  magic_bean_window_open_by_name(MagicBeanProcess* process, const char* name)
 {
 	if (process == nullptr)
@@ -435,27 +474,30 @@ MagicBeanWindow*  magic_bean_window_open_by_name(MagicBeanProcess* process, cons
 
 	struct Context
 	{
-		AL::String Name;
-		size_t     Index;
-		bool       Found;
+		AL::String        Name;
+		MagicBeanWindow*  Window;
+		MagicBeanProcess* Process;
 	};
 
 	Context context =
 	{
-		.Name  = name,
-		.Found = false
+		.Name    = name,
+		.Window  = nullptr,
+		.Process = process
 	};
 
-	magic_bean_window_enumerate_callback callback([](const MagicBeanWindowInformation* _lpInformation, void* _lpParam)
+	magic_bean_window_enumerate_callback_ex callback([](const MagicBeanWindowInformationEx& information, void* _lpParam)
 	{
 		auto lpContext = reinterpret_cast<Context*>(
 			_lpParam
 		);
 
-		if (lpContext->Name.Compare(_lpInformation->Name, AL::False))
+		if (lpContext->Name.Compare(information.Name, AL::False))
 		{
-			lpContext->Index = _lpInformation->Index;
-			lpContext->Found = true;
+			lpContext->Window = magic_bean_window_open(
+				lpContext->Process,
+				information
+			);
 
 			return false;
 		}
@@ -463,21 +505,13 @@ MagicBeanWindow*  magic_bean_window_open_by_name(MagicBeanProcess* process, cons
 		return true;
 	});
 
-	if (!magic_bean_window_enumerate(process, callback, &context) || !context.Found)
+	if (!magic_bean_window_enumerate_ex(process, callback, &context))
 	{
 
 		return nullptr;
 	}
 
-	MagicBeanWindow* window;
-
-	if ((window = magic_bean_window_open_by_index(process, context.Index)) == nullptr)
-	{
-
-		return nullptr;
-	}
-
-	return window;
+	return context.Window;
 }
 MagicBeanWindow*  magic_bean_window_open_by_index(MagicBeanProcess* process, size_t index)
 {
