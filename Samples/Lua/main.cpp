@@ -1,19 +1,19 @@
 #include <AL/Common.hpp>
 
-#include <AL/Lua543/Lua.hpp>
+#include <AL/Lua54/Lua.hpp>
 
 #include <AL/OS/Console.hpp>
 
 #include <MagicBean/MagicBean.h>
 
 typedef bool(_magic_bean_process_enumerate_callback)(uint32_t id, const char* name);
-typedef AL::Lua543::Function::LuaCallback<_magic_bean_process_enumerate_callback> _magic_bean_process_enumerate_callback_lua;
+typedef AL::Lua54::Function::LuaCallback<_magic_bean_process_enumerate_callback> _magic_bean_process_enumerate_callback_lua;
 
 typedef bool(_magic_bean_window_enumerate_callback)(uint32_t index, const char* name);
-typedef AL::Lua543::Function::LuaCallback<_magic_bean_window_enumerate_callback>  _magic_bean_window_enumerate_callback_lua;
+typedef AL::Lua54::Function::LuaCallback<_magic_bean_window_enumerate_callback>  _magic_bean_window_enumerate_callback_lua;
 
 typedef bool(_magic_bean_thread_enumerate_callback)(uint32_t id);
-typedef AL::Lua543::Function::LuaCallback<_magic_bean_thread_enumerate_callback>  _magic_bean_thread_enumerate_callback_lua;
+typedef AL::Lua54::Function::LuaCallback<_magic_bean_thread_enumerate_callback>  _magic_bean_thread_enumerate_callback_lua;
 
 bool                                        _magic_bean_is_null(void* lpUserData)
 {
@@ -171,7 +171,7 @@ AL::Collections::Tuple<ssize_t, AL::String> _magic_bean_process_memory_read_stri
 }
 
 // @throw AL::Exception
-void lua_init(AL::Lua543::State& lua)
+void lua_init(AL::Lua54::State& lua)
 {
 	#define lua_init_RegisterGlobal(__lua__, __value__)                    lua.SetGlobal(#__value__, __value__)
 	#define lua_init_RegisterGlobalAs(__lua__, __value__, __name__)        lua.SetGlobal(__name__, __value__)
@@ -269,7 +269,7 @@ void lua_init(AL::Lua543::State& lua)
 }
 
 // @throw AL::Exception
-void lua_run(AL::Lua543::State& lua, int argc, char* argv[])
+void lua_run(AL::Lua54::State& lua, int argc, char* argv[])
 {
 	AL::OS::Console::WriteLine(
 		LUA_COPYRIGHT
@@ -289,7 +289,7 @@ void lua_run(AL::Lua543::State& lua, int argc, char* argv[])
 
 int main(int argc, char* argv[])
 {
-	AL::Lua543::State lua;
+	AL::Lua54::State lua;
 
 	try
 	{
