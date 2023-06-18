@@ -958,7 +958,7 @@ MagicBeanProcess* magic_bean_process_open_by_id(MagicBean* magic, uint32_t id)
 
 	try
 	{
-		if (!AL::OS::ProcessMemory::Open(process->Memory, process->Base, AL::OS::ProcessMemoryAccessFlags::All))
+		if (!AL::OS::ProcessMemory::Open(process->Memory, process->Base, AL::OS::ProcessMemoryAccessModes::ReadWrite))
 		{
 			process->Base.Close();
 
@@ -1013,7 +1013,7 @@ MagicBeanProcess* magic_bean_process_open_by_name(MagicBean* magic, const char* 
 
 	try
 	{
-		if (!AL::OS::ProcessMemory::Open(process->Memory, process->Base, AL::OS::ProcessMemoryAccessFlags::All))
+		if (!AL::OS::ProcessMemory::Open(process->Memory, process->Base, AL::OS::ProcessMemoryAccessModes::ReadWrite))
 		{
 			process->Base.Close();
 
@@ -1166,7 +1166,7 @@ bool              magic_bean_process_memory_read(MagicBeanProcess* process, uint
 		for (uint64_t totalBytesRead = 0, numberOfBytesRead, numberOfBytesRemaining = size; totalBytesRead < size; )
 		{
 			process->Memory.Read(
-				static_cast<AL::OS::ProcessMemoryAddress>(address + totalBytesRead),
+				reinterpret_cast<AL::Void*>(address + totalBytesRead),
 				&reinterpret_cast<uint8_t*>(lpBuffer)[totalBytesRead],
 				static_cast<size_t>(numberOfBytesRead = ((numberOfBytesRemaining <= AL::Integer<size_t>::Maximum) ? numberOfBytesRemaining : AL::Integer<size_t>::Maximum))
 			);
@@ -1263,7 +1263,7 @@ bool              magic_bean_process_memory_write(MagicBeanProcess* process, uin
 		for (uint64_t totalBytesWritten = 0, numberOfBytesWritten, numberOfBytesRemaining = size; totalBytesWritten < size; )
 		{
 			process->Memory.Write(
-				static_cast<AL::OS::ProcessMemoryAddress>(address + totalBytesWritten),
+				reinterpret_cast<AL::Void*>(address + totalBytesWritten),
 				&reinterpret_cast<const uint8_t*>(lpBuffer)[totalBytesWritten],
 				static_cast<size_t>(numberOfBytesWritten = ((numberOfBytesRemaining <= AL::Integer<size_t>::Maximum) ? numberOfBytesRemaining : AL::Integer<size_t>::Maximum))
 			);
@@ -1326,7 +1326,7 @@ bool              magic_bean_process_memory_write_string(MagicBeanProcess* proce
 }
 uint64_t          magic_bean_process_memory_find(MagicBeanProcess* process, const char* mask, const uint8_t* pattern)
 {
-	return magic_bean_process_memory_find_at(process, mask, pattern, AL::Integer<AL::OS::ProcessMemoryAddress>::Minimum, AL::Integer<AL::OS::ProcessMemoryAddress>::Maximum);
+	return magic_bean_process_memory_find_at(process, mask, pattern, AL::Integer<AL::size_t>::Minimum, AL::Integer<AL::size_t>::Maximum);
 }
 uint64_t          magic_bean_process_memory_find_at(MagicBeanProcess* process, const char* mask, const uint8_t* pattern, uint64_t address, uint64_t size)
 {
@@ -1359,11 +1359,11 @@ uint64_t          magic_bean_process_memory_find_at(MagicBeanProcess* process, c
 		};
 	}
 
-	AL::OS::ProcessMemoryAddress _address;
+	AL::Void* _address;
 
 	try
 	{
-		if (!process->Memory.Search(_address, _pattern, static_cast<AL::OS::ProcessMemoryAddress>(address), static_cast<AL::OS::ProcessMemoryAddress>(size)))
+		if (!process->Memory.Search(_address, _pattern, reinterpret_cast<AL::Void*>(address), static_cast<AL::size_t>(size)))
 		{
 
 			return 0;
@@ -1375,7 +1375,9 @@ uint64_t          magic_bean_process_memory_find_at(MagicBeanProcess* process, c
 		return 0;
 	}
 
-	return _address;
+	return reinterpret_cast<uint64_t>(
+		_address
+	);
 }
 uint64_t          magic_bean_process_memory_allocate(MagicBeanProcess* process, uint64_t size, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPES type)
 {
@@ -1389,32 +1391,36 @@ uint64_t          magic_bean_process_memory_allocate_at(MagicBeanProcess* proces
 		return 0;
 	}
 
+	AL::Void* _address = nullptr;
+
 	try
 	{
-		return process->Memory.Allocate(
-			static_cast<AL::OS::ProcessMemoryAddress>(address),
+		_address = process->Memory.Allocate(
+			reinterpret_cast<AL::Void*>(address),
 			static_cast<AL::size_t>(size),
-			[type]() -> AL::OS::ProcessMemoryProtectionTypes
+			AL::OS::ProcessMemoryAllocationTypes::Commit,
+			[type]() -> AL::OS::ProcessMemoryProtections
 			{
 				switch (type)
 				{
-					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_NONE:               return AL::OS::ProcessMemoryProtectionTypes::None;
-					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_READ:               return AL::OS::ProcessMemoryProtectionTypes::Read;
-					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_READ_WRITE:         return AL::OS::ProcessMemoryProtectionTypes::ReadWrite;
-					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE:            return AL::OS::ProcessMemoryProtectionTypes::Execute;
-					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE_READ:       return AL::OS::ProcessMemoryProtectionTypes::ExecuteRead;
-					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE_READ_WRITE: return AL::OS::ProcessMemoryProtectionTypes::ExecuteReadWrite;
+					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_READ:               return AL::OS::ProcessMemoryProtections::Read;
+					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_READ_WRITE:         return AL::OS::ProcessMemoryProtections::Read | AL::OS::ProcessMemoryProtections::Write;
+					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE:            return AL::OS::ProcessMemoryProtections::Execute;
+					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE_READ:       return AL::OS::ProcessMemoryProtections::Execute | AL::OS::ProcessMemoryProtections::Read;
+					case MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE_READ_WRITE: return AL::OS::ProcessMemoryProtections::Execute | AL::OS::ProcessMemoryProtections::Read | AL::OS::ProcessMemoryProtections::Write;
 				}
 
-				return AL::OS::ProcessMemoryProtectionTypes::None;
+				return AL::OS::ProcessMemoryProtections::Read;
 			}()
 		);
 	}
 	catch (const AL::Exception& exception)
 	{
-
-		return 0;
 	}
+
+	return reinterpret_cast<uint64_t>(
+		_address
+	);
 }
 bool              magic_bean_process_memory_release(MagicBeanProcess* process, uint64_t address)
 {
@@ -1427,8 +1433,7 @@ bool              magic_bean_process_memory_release(MagicBeanProcess* process, u
 	try
 	{
 		process->Memory.Release(
-			static_cast<AL::OS::ProcessMemoryAddress>(address),
-			0
+			reinterpret_cast<AL::Void*>(address)
 		);
 	}
 	catch (const AL::Exception& exception)

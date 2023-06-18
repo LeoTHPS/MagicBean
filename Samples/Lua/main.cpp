@@ -182,7 +182,6 @@ void lua_init(AL::Lua54::State& lua)
 
 	luaL_openlibs(lua.GetHandle());
 
-	lua_init_RegisterGlobal(lua, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_NONE);
 	lua_init_RegisterGlobal(lua, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_READ);
 	lua_init_RegisterGlobal(lua, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_READ_WRITE);
 	lua_init_RegisterGlobal(lua, MAGIC_BEAN_PROCESS_MEMORY_PROTECTION_TYPE_EXECUTE);
