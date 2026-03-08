@@ -236,7 +236,7 @@ local function MagicBean_InitProcess(magic, handle)
 	end
 
 	function process:GetFileVersion()
-		return magic_bean_process_get_file_version(self.Handle) & 0xFFFFFFFFFFFFFFFF;
+		return tonumber(magic_bean_process_get_file_version(self.Handle));
 	end
 
 	-- @param param is optional
