@@ -185,8 +185,6 @@ int main(int argc, char* argv[])
 		lua_set_global(lua, MAGIC_BEAN_MEMORY_PROTECTION_EXECUTE_READ_WRITE);
 		lua_set_global(lua, MAGIC_BEAN_MEMORY_PROTECTION_EXECUTE_WRITE_COPY);
 
-		lua_set_global_function(lua, magic_bean_init);
-		lua_set_global_function(lua, magic_bean_deinit);
 		lua_set_global_function(lua, magic_bean_get_time_ms);
 		lua_set_global_function(lua, magic_bean_get_time_us);
 		lua_set_global_function(lua, magic_bean_get_timestamp);

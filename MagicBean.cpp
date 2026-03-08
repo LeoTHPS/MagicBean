@@ -25,11 +25,14 @@ struct magic_bean
 	magic_bean_timer               timer;
 	std::list<magic_bean_hook*>    hooks;
 	std::list<magic_bean_process*> processes;
+
+	magic_bean();
+
+	~magic_bean();
 };
 struct magic_bean_hook
 {
-	int         type;
-	magic_bean* magic;
+	int type;
 
 	union
 	{
@@ -60,7 +63,6 @@ struct magic_bean_window
 struct magic_bean_process
 {
 	uint32_t                      id;
-	magic_bean*                   magic;
 	HANDLE                        handle;
 	std::list<magic_bean_thread*> threads;
 	std::list<magic_bean_window*> windows;
@@ -179,6 +181,8 @@ constexpr bool static_assert_magic_bean_key_state_info(std::index_sequence<I ...
 }
 static_assert(static_assert_magic_bean_key_state_info(std::make_index_sequence<MAGIC_BEAN_KEY_STATE_COUNT> {}));
 
+magic_bean magic;
+
 void                          magic_bean_timer_init(magic_bean_timer& timer)
 {
 	LARGE_INTEGER li;
@@ -243,65 +247,43 @@ void                          magic_bean_process_deinit(magic_bean_process* proc
 	delete process;
 }
 
-magic_bean*                   magic_bean_init()
+magic_bean::magic_bean()
 {
-	auto magic = new magic_bean
-	{
-	};
-
-	magic_bean_timer_init(magic->timer);
-
-	return magic;
+	magic_bean_timer_init(timer);
 }
-void                          magic_bean_deinit(magic_bean* magic)
+magic_bean::~magic_bean()
 {
-	if (!magic)
-		return;
-
-	magic->hooks.remove_if([](magic_bean_hook* hook) {
+	hooks.remove_if([](magic_bean_hook* hook) {
 		magic_bean_hook_deinit(hook);
 
 		return true;
 	});
 
-	magic->processes.remove_if([](magic_bean_process* process) {
+	processes.remove_if([](magic_bean_process* process) {
 		magic_bean_process_deinit(process);
 
 		return true;
 	});
-
-	delete magic;
 }
-uint64_t                      magic_bean_get_time_ms(magic_bean* magic)
-{
-	if (!magic)
-		return 0;
 
-	return magic_bean_timer_get_elapsed_ms(magic->timer);
+uint64_t                      magic_bean_get_time_ms()
+{
+	return magic_bean_timer_get_elapsed_ms(magic.timer);
 }
-uint64_t                      magic_bean_get_time_us(magic_bean* magic)
+uint64_t                      magic_bean_get_time_us()
 {
-	if (!magic)
-		return 0;
-
-	return magic_bean_timer_get_elapsed_us(magic->timer);
+	return magic_bean_timer_get_elapsed_us(magic.timer);
 }
-uint64_t                      magic_bean_get_timestamp(magic_bean* magic)
+uint64_t                      magic_bean_get_timestamp()
 {
-	if (!magic)
-		return 0;
-
 	return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
-void                          magic_bean_sleep(magic_bean* magic, uint32_t ms)
+void                          magic_bean_sleep(uint32_t ms)
 {
 	Sleep((DWORD)ms);
 }
-magic_bean_process*           magic_bean_open_process_by_id(magic_bean* magic, uint32_t id)
+magic_bean_process*           magic_bean_open_process_by_id(uint32_t id)
 {
-	if (!magic)
-		return nullptr;
-
 	HANDLE handle;
 
 	if ((handle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)id)) == NULL)
@@ -310,19 +292,15 @@ magic_bean_process*           magic_bean_open_process_by_id(magic_bean* magic, u
 	auto process = new magic_bean_process
 	{
 		.id     = id,
-		.magic  = magic,
 		.handle = handle
 	};
 
-	magic->processes.push_back(process);
+	magic.processes.push_back(process);
 
 	return process;
 }
-magic_bean_process*           magic_bean_open_process_by_name(magic_bean* magic, std::string_view name)
+magic_bean_process*           magic_bean_open_process_by_name(std::string_view name)
 {
-	if (!magic)
-		return nullptr;
-
 	HANDLE snapshot;
 
 	if ((snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)) == INVALID_HANDLE_VALUE)
@@ -351,11 +329,10 @@ magic_bean_process*           magic_bean_open_process_by_name(magic_bean* magic,
 			auto p = new magic_bean_process
 			{
 				.id     = process.th32ProcessID,
-				.magic  = magic,
 				.handle = handle
 			};
 
-			magic->processes.push_back(p);
+			magic.processes.push_back(p);
 
 			return p;
 		}
@@ -372,11 +349,8 @@ magic_bean_process*           magic_bean_open_process_by_name(magic_bean* magic,
 
 	return nullptr;
 }
-magic_bean_process*           magic_bean_start_process(magic_bean* magic, std::string_view path)
+magic_bean_process*           magic_bean_start_process(std::string_view path)
 {
-	if (!magic)
-		return nullptr;
-
 	STARTUPINFO         startup = { .cb = sizeof(STARTUPINFO) };
 	PROCESS_INFORMATION information;
 
@@ -388,51 +362,50 @@ magic_bean_process*           magic_bean_start_process(magic_bean* magic, std::s
 	auto process = new magic_bean_process
 	{
 		.id     = information.dwProcessId,
-		.magic  = magic,
 		.handle = information.hProcess
 	};
 
-	magic->processes.push_back(process);
+	magic.processes.push_back(process);
 
 	return process;
 }
-void                          magic_bean_close_process(magic_bean* magic, magic_bean_process* process)
+void                          magic_bean_close_process(magic_bean_process* process)
 {
-	if (!magic || !process)
+	if (!process)
 		return;
 
-	magic->processes.remove(process);
+	magic.processes.remove(process);
 
 	magic_bean_process_deinit(process);
 }
-magic_bean_hook*              magic_bean_hook_key(magic_bean* magic, int key, magic_bean_on_key_state_changed on_state_changed)
+magic_bean_hook*              magic_bean_hook_key(int key, magic_bean_on_key_state_changed on_state_changed)
 {
-	if (!magic || !on_state_changed || (key >= MAGIC_BEAN_KEY_COUNT))
+	if (!on_state_changed || (key >= MAGIC_BEAN_KEY_COUNT))
 		return nullptr;
 
 	// TODO: implement
 
 	return nullptr;
 }
-magic_bean_hook*              magic_bean_hook_button(magic_bean* magic, int button, magic_bean_on_button_state_changed on_state_changed)
+magic_bean_hook*              magic_bean_hook_button(int button, magic_bean_on_button_state_changed on_state_changed)
 {
-	if (!magic || !on_state_changed || (button >= MAGIC_BEAN_BUTTON_COUNT))
+	if (!on_state_changed || (button >= MAGIC_BEAN_BUTTON_COUNT))
 		return nullptr;
 
 	// TODO: implement
 
 	return nullptr;
 }
-void                          magic_bean_unhook(magic_bean* magic, magic_bean_hook* hook)
+void                          magic_bean_unhook(magic_bean_hook* hook)
 {
-	if (!magic || !hook)
+	if (!hook)
 		return;
 
-	magic->hooks.remove(hook);
+	magic.hooks.remove(hook);
 
 	magic_bean_hook_deinit(hook);
 }
-std::tuple<bool, uint64_t>    magic_bean_get_module_export(magic_bean* magic, std::string_view module, std::string_view name)
+std::tuple<bool, uint64_t>    magic_bean_get_module_export(std::string_view module, std::string_view name)
 {
 	std::tuple<bool, uint64_t> value(false, 0);
 
@@ -445,9 +418,9 @@ std::tuple<bool, uint64_t>    magic_bean_get_module_export(magic_bean* magic, st
 
 	return value;
 }
-bool                          magic_bean_enumerate_processes(magic_bean* magic, magic_bean_enum_process_callback callback)
+bool                          magic_bean_enumerate_processes(magic_bean_enum_process_callback callback)
 {
-	if (!magic || !callback)
+	if (!callback)
 		return false;
 
 	HANDLE snapshot;
@@ -465,7 +438,7 @@ bool                          magic_bean_enumerate_processes(magic_bean* magic, 
 	}
 
 	do
-		callback(magic, process.th32ProcessID, process.szExeFile);
+		callback(process.th32ProcessID, process.szExeFile);
 	while (Process32Next(snapshot, &process));
 
 	if (GetLastError() != ERROR_NO_MORE_FILES)
