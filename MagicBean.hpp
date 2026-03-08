@@ -140,13 +140,9 @@ enum MAGIC_BEAN_MEMORY_PROTECTION
 };
 
 struct magic_bean;
-struct magic_bean_hook;
 struct magic_bean_thread;
 struct magic_bean_window;
 struct magic_bean_process;
-
-typedef void(*magic_bean_on_key_state_changed)(magic_bean_hook* hook, int key, int state);
-typedef void(*magic_bean_on_button_state_changed)(magic_bean_hook* hook, int button, int state);
 
 typedef void(*magic_bean_enum_process_callback)(magic_bean* magic, uint32_t id, std::string_view name);
 typedef void(*magic_bean_process_enum_thread_callback)(magic_bean_process* process, uint32_t id);
@@ -162,9 +158,6 @@ magic_bean_process*           magic_bean_open_process_by_id(magic_bean* magic, u
 magic_bean_process*           magic_bean_open_process_by_name(magic_bean* magic, std::string_view name);
 magic_bean_process*           magic_bean_start_process(magic_bean* magic, std::string_view path);
 void                          magic_bean_close_process(magic_bean* magic, magic_bean_process* process);
-magic_bean_hook*              magic_bean_hook_key(magic_bean* magic, int key, magic_bean_on_key_state_changed on_state_changed);
-magic_bean_hook*              magic_bean_hook_button(magic_bean* magic, int button, magic_bean_on_button_state_changed on_state_changed);
-void                          magic_bean_unhook(magic_bean* magic, magic_bean_hook* hook);
 std::tuple<bool, uint64_t>    magic_bean_get_module_export(magic_bean* magic, std::string_view module, std::string_view name);
 bool                          magic_bean_enumerate_processes(magic_bean* magic, magic_bean_enum_process_callback callback);
 
@@ -180,7 +173,7 @@ int                           magic_bean_thread_join(magic_bean_thread* thread, 
 bool                          magic_bean_window_is_focus(magic_bean_window* window);
 std::string                   magic_bean_window_get_title(magic_bean_window* window);
 bool                          magic_bean_window_send_key(magic_bean_window* window, int value, int state);
-bool                          magic_bean_window_send_button(magic_bean_window* window, int value, int state);
+bool                          magic_bean_window_send_button(magic_bean_window* window, int value, int state, uint16_t x, uint16_t y);
 bool                          magic_bean_window_send_string(magic_bean_window* window, std::string_view value);
 bool                          magic_bean_window_set_title(magic_bean_window* window, std::string_view value);
 

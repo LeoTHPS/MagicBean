@@ -192,16 +192,16 @@ local function MagicBean_InitWindow(process, handle)
 		return true;
 	end
 	-- @param state is optional
-	function window:SendButton(value, state)
+	function window:SendButton(value, x, y, state)
 		if state ~= nil then
-			return magic_bean_window_send_button(self.Handle, value, state) and true or false;
+			return magic_bean_window_send_button(self.Handle, value, state, x, y) and true or false;
 		end
 
-		if not magic_bean_window_send_button(self.Handle, value, MagicBean.BUTTON_STATE_DOWN) then
+		if not magic_bean_window_send_button(self.Handle, value, MagicBean.BUTTON_STATE_DOWN, x, y) then
 			return false;
 		end
 
-		if not magic_bean_window_send_button(self.Handle, value, MagicBean.BUTTON_STATE_UP) then
+		if not magic_bean_window_send_button(self.Handle, value, MagicBean.BUTTON_STATE_UP, x, y) then
 			return false;
 		end
 
@@ -584,18 +584,4 @@ function MagicBean.EnumerateProcesses(callback)
 	return magic_bean_enumerate_processes(MagicBean.Handle, function(magic, id, name)
 		callback(id, name);
 	end) and true or false;
-end
-
--- @param callback(hook, key, state)
--- @return hook
-function MagicBean.AddKeyHook(key, callback)
-	return magic_bean_hook_key(MagicBean.Handle, key, callback);
-end
--- @param callback(hook, button, state)
--- @return hook
-function MagicBean.AddButtonHook(button, callback)
-	return magic_bean_hook_button(MagicBean.Handle, button, callback);
-end
-function MagicBean.RemoveHook(hook)
-	magic_bean_unhook(MagicBean.Handle, hook);
 end

@@ -23,28 +23,7 @@ struct magic_bean_timer
 struct magic_bean
 {
 	magic_bean_timer               timer;
-	std::list<magic_bean_hook*>    hooks;
 	std::list<magic_bean_process*> processes;
-};
-struct magic_bean_hook
-{
-	int         type;
-	magic_bean* magic;
-
-	union
-	{
-		struct
-		{
-			int                             value;
-			magic_bean_on_key_state_changed callback;
-		} key;
-
-		struct
-		{
-			int                                value;
-			magic_bean_on_button_state_changed callback;
-		} button;
-	};
 };
 struct magic_bean_thread
 {
@@ -76,6 +55,13 @@ struct magic_bean_key_state_info
 	int    state;
 	UINT   message;
 	LPARAM message_lparam;
+};
+
+struct magic_bean_button_info
+{
+	int    button;
+	UINT   message[MAGIC_BEAN_BUTTON_STATE_COUNT];
+	WPARAM message_wparam;
 };
 
 constexpr magic_bean_key_info MAGIC_BEAN_KEY_INFO[MAGIC_BEAN_KEY_COUNT] =
@@ -179,6 +165,21 @@ constexpr bool static_assert_magic_bean_key_state_info(std::index_sequence<I ...
 }
 static_assert(static_assert_magic_bean_key_state_info(std::make_index_sequence<MAGIC_BEAN_KEY_STATE_COUNT> {}));
 
+constexpr magic_bean_button_info MAGIC_BEAN_BUTTON_INFO[MAGIC_BEAN_BUTTON_COUNT] =
+{
+	{ MAGIC_BEAN_BUTTON_X1,     { WM_XBUTTONUP, WM_XBUTTONDOWN }, MK_XBUTTON1 },
+	{ MAGIC_BEAN_BUTTON_X2,     { WM_XBUTTONUP, WM_XBUTTONDOWN }, MK_XBUTTON2 },
+	{ MAGIC_BEAN_BUTTON_LEFT,   { WM_LBUTTONUP, WM_LBUTTONDOWN }, MK_LBUTTON  },
+	{ MAGIC_BEAN_BUTTON_RIGHT,  { WM_RBUTTONUP, WM_RBUTTONDOWN }, MK_RBUTTON  },
+	{ MAGIC_BEAN_BUTTON_MIDDLE, { WM_MBUTTONUP, WM_MBUTTONDOWN }, MK_MBUTTON  }
+};
+template<size_t ... I>
+constexpr bool static_assert_magic_bean_button_info(std::index_sequence<I ...>)
+{
+	return ((MAGIC_BEAN_BUTTON_INFO[I].button == I) && ...);
+}
+static_assert(static_assert_magic_bean_button_info(std::make_index_sequence<MAGIC_BEAN_BUTTON_COUNT> {}));
+
 void                          magic_bean_timer_init(magic_bean_timer& timer)
 {
 	LARGE_INTEGER li;
@@ -210,10 +211,6 @@ void                          magic_bean_timer_reset(magic_bean_timer& timer)
 	timer.start = li.QuadPart;
 }
 
-void                          magic_bean_hook_deinit(magic_bean_hook* hook)
-{
-	delete hook;
-}
 void                          magic_bean_thread_deinit(magic_bean_thread* thread)
 {
 	CloseHandle(thread->handle);
@@ -257,12 +254,6 @@ void                          magic_bean_deinit(magic_bean* magic)
 {
 	if (!magic)
 		return;
-
-	magic->hooks.remove_if([](magic_bean_hook* hook) {
-		magic_bean_hook_deinit(hook);
-
-		return true;
-	});
 
 	magic->processes.remove_if([](magic_bean_process* process) {
 		magic_bean_process_deinit(process);
@@ -404,33 +395,6 @@ void                          magic_bean_close_process(magic_bean* magic, magic_
 	magic->processes.remove(process);
 
 	magic_bean_process_deinit(process);
-}
-magic_bean_hook*              magic_bean_hook_key(magic_bean* magic, int key, magic_bean_on_key_state_changed on_state_changed)
-{
-	if (!magic || !on_state_changed || (key >= MAGIC_BEAN_KEY_COUNT))
-		return nullptr;
-
-	// TODO: implement
-
-	return nullptr;
-}
-magic_bean_hook*              magic_bean_hook_button(magic_bean* magic, int button, magic_bean_on_button_state_changed on_state_changed)
-{
-	if (!magic || !on_state_changed || (button >= MAGIC_BEAN_BUTTON_COUNT))
-		return nullptr;
-
-	// TODO: implement
-
-	return nullptr;
-}
-void                          magic_bean_unhook(magic_bean* magic, magic_bean_hook* hook)
-{
-	if (!magic || !hook)
-		return;
-
-	magic->hooks.remove(hook);
-
-	magic_bean_hook_deinit(hook);
 }
 std::tuple<bool, uint64_t>    magic_bean_get_module_export(magic_bean* magic, std::string_view module, std::string_view name)
 {
@@ -575,19 +539,29 @@ bool                          magic_bean_window_send_key(magic_bean_window* wind
 	if (!window || (value >= MAGIC_BEAN_KEY_COUNT) || (state >= MAGIC_BEAN_KEY_STATE_COUNT))
 		return false;
 
-	if (!PostMessageA(window->handle, MAGIC_BEAN_KEY_STATE_INFO[state].message, MAGIC_BEAN_KEY_INFO[value].message_wparam, MAGIC_BEAN_KEY_STATE_INFO[state].message_lparam))
+	if (!PostMessage(window->handle, MAGIC_BEAN_KEY_STATE_INFO[state].message, MAGIC_BEAN_KEY_INFO[value].message_wparam, MAGIC_BEAN_KEY_STATE_INFO[state].message_lparam))
 		return false;
 
 	return true;
 }
-bool                          magic_bean_window_send_button(magic_bean_window* window, int value, int state)
+bool                          magic_bean_window_send_button(magic_bean_window* window, int value, int state, uint16_t x, uint16_t y)
 {
 	if (!window || (value >= MAGIC_BEAN_BUTTON_COUNT) || (state >= MAGIC_BEAN_BUTTON_STATE_COUNT))
 		return false;
 
-	// TODO: implement
+	auto info = &MAGIC_BEAN_BUTTON_INFO[value];
 
-	return false;
+	UINT   msg    = info->message[state];
+	WPARAM wParam = info->message_wparam;
+	LPARAM lParam = ((LPARAM)y << 16) | (LPARAM)x;
+
+	if (state == MAGIC_BEAN_BUTTON_STATE_UP)
+		wParam <<= 16;
+
+	if (!PostMessage(window->handle, msg, wParam, lParam))
+		return false;
+
+	return true;
 }
 bool                          magic_bean_window_send_string(magic_bean_window* window, std::string_view value)
 {
@@ -595,7 +569,7 @@ bool                          magic_bean_window_send_string(magic_bean_window* w
 		return false;
 
 	for (auto c : value)
-		if (!PostMessageA(window->handle, WM_CHAR, (WPARAM)c, 0))
+		if (!PostMessage(window->handle, WM_CHAR, (WPARAM)c, 0))
 			return false;
 
 	return true;

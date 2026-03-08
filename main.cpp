@@ -195,9 +195,6 @@ int main(int argc, char* argv[])
 		lua_set_global_function(lua, magic_bean_open_process_by_name);
 		lua_set_global_function(lua, magic_bean_start_process);
 		lua_set_global_function(lua, magic_bean_close_process);
-		lua_set_global_function(lua, magic_bean_hook_key);
-		lua_set_global_function(lua, magic_bean_hook_button);
-		lua_set_global_function(lua, magic_bean_unhook);
 		lua_set_global_function(lua, magic_bean_get_module_export);
 		lua_set_global_function(lua, magic_bean_enumerate_processes);
 
