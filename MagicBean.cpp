@@ -284,6 +284,22 @@ uint64_t                      magic_bean_get_timestamp(magic_bean* magic)
 
 	return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
+int                           magic_bean_get_key_state(magic_bean* magic, int key)
+{
+	if (key < MAGIC_BEAN_KEY_COUNT)
+		if (GetAsyncKeyState(MAGIC_BEAN_KEY_INFO[key].message_wparam) & 0x8000)
+			return MAGIC_BEAN_KEY_STATE_DOWN;
+
+	return MAGIC_BEAN_KEY_STATE_UP;
+}
+int                           magic_bean_get_button_state(magic_bean* magic, int button)
+{
+	if (button < MAGIC_BEAN_BUTTON_COUNT)
+		if (GetAsyncKeyState(MAGIC_BEAN_BUTTON_INFO[button].message_wparam) & 0x8000)
+			return MAGIC_BEAN_BUTTON_STATE_DOWN;
+
+	return MAGIC_BEAN_BUTTON_STATE_UP;
+}
 void                          magic_bean_sleep(magic_bean* magic, uint32_t ms)
 {
 	Sleep((DWORD)ms);

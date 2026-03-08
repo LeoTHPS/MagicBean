@@ -190,6 +190,8 @@ int main(int argc, char* argv[])
 		lua_set_global_function(lua, magic_bean_get_time_ms);
 		lua_set_global_function(lua, magic_bean_get_time_us);
 		lua_set_global_function(lua, magic_bean_get_timestamp);
+		lua_set_global_function(lua, magic_bean_get_key_state);
+		lua_set_global_function(lua, magic_bean_get_button_state);
 		lua_set_global_function(lua, magic_bean_sleep);
 		lua_set_global_function(lua, magic_bean_open_process_by_id);
 		lua_set_global_function(lua, magic_bean_open_process_by_name);

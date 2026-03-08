@@ -153,6 +153,8 @@ void                          magic_bean_deinit(magic_bean* magic);
 uint64_t                      magic_bean_get_time_ms(magic_bean* magic);
 uint64_t                      magic_bean_get_time_us(magic_bean* magic);
 uint64_t                      magic_bean_get_timestamp(magic_bean* magic);
+int                           magic_bean_get_key_state(magic_bean* magic, int key);
+int                           magic_bean_get_button_state(magic_bean* magic, int button);
 void                          magic_bean_sleep(magic_bean* magic, uint32_t ms);
 magic_bean_process*           magic_bean_open_process_by_id(magic_bean* magic, uint32_t id);
 magic_bean_process*           magic_bean_open_process_by_name(magic_bean* magic, std::string_view name);

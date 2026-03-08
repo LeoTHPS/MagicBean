@@ -533,6 +533,17 @@ function MagicBean.GetTimestamp()
 	return tonumber(value);
 end
 
+function MagicBean.GetKeyState(key)
+	local value = magic_bean_get_key_state(MagicBean.Handle, key);
+
+	return tonumber(value);
+end
+function MagicBean.GetButtonState(button)
+	local value = magic_bean_get_button_state(MagicBean.Handle, button);
+
+	return tonumber(value);
+end
+
 function MagicBean.Sleep(ms)
 	magic_bean_sleep(MagicBean.Handle, ms);
 end
