@@ -1,4 +1,5 @@
 MagicBean                                      = {};
+MagicBean.Handle                               = magic_bean_init();
 MagicBean.KEY_A                                = MAGIC_BEAN_KEY_A;
 MagicBean.KEY_B                                = MAGIC_BEAN_KEY_B;
 MagicBean.KEY_C                                = MAGIC_BEAN_KEY_C;
@@ -99,6 +100,12 @@ MagicBean.MEMORY_PROTECTION_EXECUTE            = MAGIC_BEAN_MEMORY_PROTECTION_EX
 MagicBean.MEMORY_PROTECTION_EXECUTE_READ       = MAGIC_BEAN_MEMORY_PROTECTION_EXECUTE_READ;
 MagicBean.MEMORY_PROTECTION_EXECUTE_READ_WRITE = MAGIC_BEAN_MEMORY_PROTECTION_EXECUTE_READ_WRITE;
 MagicBean.MEMORY_PROTECTION_EXECUTE_WRITE_COPY = MAGIC_BEAN_MEMORY_PROTECTION_EXECUTE_WRITE_COPY;
+
+setmetatable(MagicBean, {
+	__gc = function(self)
+		magic_bean_deinit(self.Handle);
+	end
+});
 
 local function MagicBean_InitThread(process, handle)
 	local thread = {};
@@ -210,14 +217,14 @@ local function MagicBean_InitWindow(process, handle)
 
 	return window;
 end
-local function MagicBean_InitProcess(handle)
+local function MagicBean_InitProcess(magic, handle)
 	local process = {};
 
 	process.Handle = handle;
 
 	setmetatable(process, {
 		__gc = function(self)
-			magic_bean_close_process(self.Handle);
+			magic_bean_close_process(magic, self.Handle);
 		end
 	});
 
@@ -511,59 +518,59 @@ local function MagicBean_InitProcess(handle)
 end
 
 function MagicBean.GetTimeMS()
-	local value = magic_bean_get_time_ms();
+	local value = magic_bean_get_time_ms(MagicBean.Handle);
 
 	return tonumber(value);
 end
 function MagicBean.GetTimeUS()
-	local value = magic_bean_get_time_us();
+	local value = magic_bean_get_time_us(MagicBean.Handle);
 
 	return tonumber(value);
 end
 function MagicBean.GetTimestamp()
-	local value = magic_bean_get_timestamp();
+	local value = magic_bean_get_timestamp(MagicBean.Handle);
 
 	return tonumber(value);
 end
 
 function MagicBean.Sleep(ms)
-	magic_bean_sleep(ms);
+	magic_bean_sleep(MagicBean.Handle, ms);
 end
 
 -- @return process
 function MagicBean.StartProcess(path)
-	local handle = magic_bean_start_process(path);
+	local handle = magic_bean_start_process(MagicBean.Handle, path);
 
 	if not handle then
 		return nil;
 	end
 
-	return MagicBean_InitProcess(handle);
+	return MagicBean_InitProcess(MagicBean.Handle, handle);
 end
 -- @return process
 function MagicBean.OpenProcessById(id)
-	local handle = magic_bean_open_process_by_id(id);
+	local handle = magic_bean_open_process_by_id(MagicBean.Handle, id);
 
 	if not handle then
 		return nil;
 	end
 
-	return MagicBean_InitProcess(handle);
+	return MagicBean_InitProcess(MagicBean.Handle, handle);
 end
 -- @return process
 function MagicBean.OpenProcessByName(name)
-	local handle = magic_bean_open_process_by_name(name);
+	local handle = magic_bean_open_process_by_name(MagicBean.Handle, name);
 
 	if not handle then
 		return nil;
 	end
 
-	return MagicBean_InitProcess(handle);
+	return MagicBean_InitProcess(MagicBean.Handle, handle);
 end
 
 -- @return success, address
 function MagicBean.GetModuleExport(module, name)
-	local success, address = magic_bean_get_module_export(module, name);
+	local success, address = magic_bean_get_module_export(MagicBean.Handle, module, name);
 
 	if not success then
 		return false;
@@ -574,7 +581,7 @@ end
 
 -- @param callback(id, name)
 function MagicBean.EnumerateProcesses(callback)
-	return magic_bean_enumerate_processes(function(id, name)
+	return magic_bean_enumerate_processes(MagicBean.Handle, function(magic, id, name)
 		callback(id, name);
 	end) and true or false;
 end
@@ -582,13 +589,13 @@ end
 -- @param callback(hook, key, state)
 -- @return hook
 function MagicBean.AddKeyHook(key, callback)
-	return magic_bean_hook_key(key, callback);
+	return magic_bean_hook_key(MagicBean.Handle, key, callback);
 end
 -- @param callback(hook, button, state)
 -- @return hook
 function MagicBean.AddButtonHook(button, callback)
-	return magic_bean_hook_button(button, callback);
+	return magic_bean_hook_button(MagicBean.Handle, button, callback);
 end
 function MagicBean.RemoveHook(hook)
-	magic_bean_unhook(hook);
+	magic_bean_unhook(MagicBean.Handle, hook);
 end
