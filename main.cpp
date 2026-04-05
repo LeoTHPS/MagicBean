@@ -77,11 +77,17 @@ int main(int argc, char* argv[])
 
 		lua.SetGlobal("MAGIC_BEAN_PLATFORM_X86",    1);
 		lua.SetGlobal("MAGIC_BEAN_PLATFORM_X86_64", 2);
+		lua.SetGlobal("MAGIC_BEAN_PLATFORM_ARM",    3);
+		lua.SetGlobal("MAGIC_BEAN_PLATFORM_ARM64",  4);
 
-#if _WIN64
-		lua.SetGlobal("MAGIC_BEAN_PLATFORM", 2);
-#elif _WIN32
+#if defined(_M_IX86)
 		lua.SetGlobal("MAGIC_BEAN_PLATFORM", 1);
+#elif defined(_M_X64) || defined(_M_AMD64)
+		lua.SetGlobal("MAGIC_BEAN_PLATFORM", 2);
+#elif defined(_M_ARM)
+		lua.SetGlobal("MAGIC_BEAN_PLATFORM", 3);
+#elif defined(_M_ARM64)
+		lua.SetGlobal("MAGIC_BEAN_PLATFORM", 4);
 #endif
 
 		lua_set_global(lua, MAGIC_BEAN_KEY_A);
