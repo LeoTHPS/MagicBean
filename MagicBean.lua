@@ -176,6 +176,9 @@ local function MagicBean_InitWindow(process, handle)
 
 		return tostring(value);
 	end
+	function window:SetTitle(value)
+		return magic_bean_window_set_title(self.Handle, value) and true or false;
+	end
 
 	-- @param state is optional
 	function window:SendKey(value, state)
@@ -211,10 +214,6 @@ local function MagicBean_InitWindow(process, handle)
 	end
 	function window:SendString(value)
 		return magic_bean_window_send_string(self.Handle, value) and true or false;
-	end
-
-	function window:SetTitle(value)
-		return magic_bean_window_set_title(self.Handle, value) and true or false;
 	end
 
 	return window;
